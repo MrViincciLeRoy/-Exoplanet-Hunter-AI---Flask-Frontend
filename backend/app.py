@@ -93,7 +93,20 @@ class ConstitutionalExoplanetClassifier:
 
 # Register classes for pickle compatibility
 # This allows unpickling objects that reference 'advanced_model' module
-sys.modules['advanced_model'] = sys.modules[__name__]
+# Handle different execution contexts (direct run, uvicorn, gunicorn, etc.)
+current_module = sys.modules[__name__]
+
+# Register under all possible module names
+module_names = ['advanced_model', 'app', 'main', __name__]
+for module_name in module_names:
+    if module_name not in sys.modules or sys.modules[module_name] is None:
+        sys.modules[module_name] = current_module
+
+# Explicitly add to current module's namespace to ensure pickle can find them
+current_module.TSFreshFeatureExtractor = TSFreshFeatureExtractor
+current_module.CNNTransformerExoplanetDetector = CNNTransformerExoplanetDetector
+current_module.AdvancedExoplanetDetectionSystem = AdvancedExoplanetDetectionSystem
+current_module.ConstitutionalExoplanetClassifier = ConstitutionalExoplanetClassifier
 
 # ============================================================================
 # INITIALIZE FASTAPI APP
