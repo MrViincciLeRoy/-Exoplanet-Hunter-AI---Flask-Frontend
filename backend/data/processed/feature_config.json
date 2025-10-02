@@ -1,0 +1,32 @@
+{
+  "target_column": "koi_disposition",
+  "primary_features": [
+    "koi_score",
+    "koi_depth",
+    "koi_teq",
+    "koi_prad",
+    "koi_smass",
+    "koi_srad",
+    "koi_steff",
+    "koi_model_snr",
+    "koi_slogg",
+    "koi_insol",
+    "koi_duration",
+    "koi_period"
+  ],
+  "all_available_features": [
+    "koi_period",
+    "koi_depth",
+    "koi_duration",
+    "koi_prad",
+    "koi_teq",
+    "koi_insol",
+    "koi_model_snr",
+    "koi_steff",
+    "koi_srad",
+    "koi_smass",
+    "koi_slogg",
+    "koi_score"
+  ],
+  "highly_correlated_pairs": []
+}

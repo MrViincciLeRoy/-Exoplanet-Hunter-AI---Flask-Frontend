@@ -1,0 +1,45 @@
+{
+  "original_data": {
+    "total_samples": 9564,
+    "features": [
+      "koi_score",
+      "koi_depth",
+      "koi_teq",
+      "koi_prad",
+      "koi_smass",
+      "koi_srad",
+      "koi_steff",
+      "koi_model_snr",
+      "koi_slogg",
+      "koi_insol",
+      "koi_duration",
+      "koi_period"
+    ],
+    "target": "koi_disposition",
+    "classes": {
+      "CANDIDATE": 0,
+      "CONFIRMED": 1,
+      "FALSE POSITIVE": 2
+    }
+  },
+  "splits": {
+    "train_size": 6909,
+    "train_size_after_smote": 10488,
+    "val_size": 1220,
+    "test_size": 1435
+  },
+  "preprocessing_steps": [
+    "Removed duplicate rows",
+    "Removed rows with missing target",
+    "Median imputation for missing values",
+    "Label encoding for target variable",
+    "StandardScaler normalization",
+    "SMOTE for class balancing (training only)",
+    "Stratified train-val-test split"
+  ],
+  "saved_artifacts": {
+    "imputer": "models/imputer.pkl",
+    "label_encoder": "models/label_encoder.pkl",
+    "scaler": "models/scaler.pkl"
+  }
+}
