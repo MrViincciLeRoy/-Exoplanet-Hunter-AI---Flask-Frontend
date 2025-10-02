@@ -18,6 +18,8 @@ import tensorflow as tf
 from tensorflow import keras
 import joblib
 import warnings
+import sys
+
 warnings.filterwarnings('ignore')
 
 # Configure logging
@@ -27,6 +29,47 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # MINIMAL CLASS DEFINITIONS FOR PICKLE DESERIALIZATION
 # ============================================================================
+
+class TSFreshFeatureExtractor:
+    """Stub class for unpickling - feature extraction not used in API"""
+    def __init__(self, *args, **kwargs):
+        pass
+    
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X):
+        return X
+    
+    def fit_transform(self, X, y=None):
+        return X
+
+class CNNTransformerExoplanetDetector:
+    """Stub class for unpickling - actual Keras model loaded separately"""
+    def __init__(self, *args, **kwargs):
+        self.model = None
+    
+    def predict(self, X):
+        if self.model:
+            return self.model.predict(X)
+        return None
+    
+    def predict_proba(self, X):
+        return self.predict(X)
+
+class AdvancedExoplanetDetectionSystem:
+    """Stub class for unpickling - components loaded separately"""
+    def __init__(self, *args, **kwargs):
+        self.cnn_transformer = None
+        self.ensemble = None
+        self.constitutional = None
+        self.feature_extractor = None
+    
+    def predict(self, X):
+        pass
+    
+    def predict_proba(self, X):
+        pass
 
 class ConstitutionalExoplanetClassifier:
     """
@@ -47,6 +90,10 @@ class ConstitutionalExoplanetClassifier:
     def predict_proba(self, X):
         """Stub method - not used in API"""
         pass
+
+# Register classes for pickle compatibility
+# This allows unpickling objects that reference 'advanced_model' module
+sys.modules['advanced_model'] = sys.modules[__name__]
 
 # ============================================================================
 # INITIALIZE FASTAPI APP
@@ -518,6 +565,7 @@ async def get_features():
 
 @app.exception_handler(404)
 async def not_found_handler(request, exc):
+    """Handle 404 errors"""
     return {
         "error": "Not Found",
         "message": "The requested endpoint does not exist",
@@ -526,6 +574,7 @@ async def not_found_handler(request, exc):
 
 @app.exception_handler(500)
 async def server_error_handler(request, exc):
+    """Handle 500 errors"""
     return {
         "error": "Internal Server Error",
         "message": "An unexpected error occurred",
