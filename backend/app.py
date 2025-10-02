@@ -24,7 +24,34 @@ warnings.filterwarnings('ignore')
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
+# ============================================================================
+# MINIMAL CLASS DEFINITIONS FOR PICKLE DESERIALIZATION
+# ============================================================================
+
+class ConstitutionalExoplanetClassifier:
+    """
+    Minimal stub class to allow unpickling of constitutional wrapper.
+    We only need to extract the threshold attributes, not run the full model.
+    """
+    def __init__(self, base_model=None, uncertainty_threshold=0.3, 
+                 confirmation_threshold=0.85, rules=None):
+        self.base_model = base_model
+        self.uncertainty_threshold = uncertainty_threshold
+        self.confirmation_threshold = confirmation_threshold
+        self.rules = rules or []
+    
+    def predict(self, X):
+        """Stub method - not used in API"""
+        pass
+    
+    def predict_proba(self, X):
+        """Stub method - not used in API"""
+        pass
+
+# ============================================================================
+# INITIALIZE FASTAPI APP
+# ============================================================================
+
 app = FastAPI(
     title="Exoplanet Hunter AI API",
     description="Advanced machine learning API for exoplanet detection and classification",
@@ -181,16 +208,22 @@ class ModelManager:
                     self.ensemble_model = joblib.load(ensemble_path)
                     logger.info("Ensemble model loaded")
                 
-                # Load constitutional wrapper (just for threshold, we'll reimplement logic)
+                # Load constitutional wrapper (just for thresholds)
                 const_path = advanced_dir / "constitutional.pkl"
                 if const_path.exists():
-                    self.constitutional_wrapper = joblib.load(const_path)
-                    logger.info("Constitutional AI config loaded")
+                    try:
+                        self.constitutional_wrapper = joblib.load(const_path)
+                        logger.info("Constitutional AI config loaded")
+                    except Exception as e:
+                        logger.warning(f"Could not load constitutional wrapper: {e}")
+                        # Create default wrapper
+                        self.constitutional_wrapper = ConstitutionalExoplanetClassifier()
+                        logger.info("Using default constitutional AI config")
                 
                 # Check if advanced system fully loaded
                 if self.cnn_transformer_model and self.ensemble_model:
                     self.use_advanced = True
-                    logger.info("Advanced system fully loaded!")
+                    logger.info("✅ Advanced system fully loaded!")
             
             # Fallback to original model
             if not self.use_advanced:
@@ -222,6 +255,11 @@ class ModelManager:
             if imputer_path.exists():
                 self.imputer = joblib.load(imputer_path)
                 logger.info("Imputer loaded")
+            
+            # Ensure we have a constitutional wrapper
+            if self.constitutional_wrapper is None:
+                self.constitutional_wrapper = ConstitutionalExoplanetClassifier()
+                logger.info("Created default constitutional AI config")
             
             return True
             
@@ -311,11 +349,11 @@ class ModelManager:
         flags = []
         explanation = []
         
-        # Check for high uncertainty
-        uncertainty_threshold = 0.3
-        if hasattr(self.constitutional_wrapper, 'uncertainty_threshold'):
-            uncertainty_threshold = self.constitutional_wrapper.uncertainty_threshold
+        # Get thresholds from constitutional wrapper
+        uncertainty_threshold = getattr(self.constitutional_wrapper, 'uncertainty_threshold', 0.3)
+        confirmation_threshold = getattr(self.constitutional_wrapper, 'confirmation_threshold', 0.85)
         
+        # Check for high uncertainty
         if uncertainty > uncertainty_threshold:
             flags.append("HIGH_UNCERTAINTY")
             explanation.append(f"High uncertainty ({uncertainty:.3f}). Recommend human review.")
@@ -327,15 +365,16 @@ class ModelManager:
             explanation.append("Multiple classes have similar probabilities.")
         
         # Check for CONFIRMED class with low confidence
-        if predicted_class == "CONFIRMED" and confidence < 0.85:
+        if predicted_class == "CONFIRMED" and confidence < confirmation_threshold:
             flags.append("LOW_CONFIDENCE_CONFIRMED")
-            explanation.append("CONFIRMED classification requires ≥85% confidence for scientific rigor.")
+            explanation.append(f"CONFIRMED classification requires ≥{confirmation_threshold*100:.0f}% confidence for scientific rigor.")
         
         # Check for significant CANDIDATE signal
-        candidate_idx = self.class_names.index("CANDIDATE") if "CANDIDATE" in self.class_names else 0
-        if probabilities[candidate_idx] > 0.3 and prediction_idx != candidate_idx:
-            flags.append("SIGNIFICANT_CANDIDATE_SIGNAL")
-            explanation.append(f"Notable CANDIDATE probability ({probabilities[candidate_idx]:.3f}).")
+        if "CANDIDATE" in self.class_names:
+            candidate_idx = self.class_names.index("CANDIDATE")
+            if probabilities[candidate_idx] > 0.3 and prediction_idx != candidate_idx:
+                flags.append("SIGNIFICANT_CANDIDATE_SIGNAL")
+                explanation.append(f"Notable CANDIDATE probability ({probabilities[candidate_idx]:.3f}).")
         
         # Check for unusual input values
         if features.koi_prad and features.koi_prad > 20:
@@ -365,17 +404,17 @@ model_manager = ModelManager()
 @app.on_event("startup")
 async def startup_event():
     """Load models on startup"""
-    logger.info("Starting Exoplanet Hunter AI API...")
+    logger.info("🚀 Starting Exoplanet Hunter AI API...")
     success = model_manager.load_models()
     if success:
-        logger.info("All models loaded successfully")
+        logger.info("✅ All models loaded successfully")
     else:
-        logger.warning("Some models failed to load")
+        logger.warning("⚠️  Some models failed to load")
 
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    logger.info("Shutting down Exoplanet Hunter AI API...")
+    logger.info("👋 Shutting down Exoplanet Hunter AI API...")
 
 # ============================================================================
 # API ENDPOINTS
@@ -469,7 +508,8 @@ async def get_features():
             "koi_insol",
             "koi_teq",
             "koi_model_snr"
-        ]
+        ],
+        "all_features": model_manager.feature_names if model_manager.feature_names else []
     }
 
 # ============================================================================
