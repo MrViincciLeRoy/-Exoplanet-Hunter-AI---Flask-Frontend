@@ -2,7 +2,175 @@
 
 {% block title %}Predict - Exoplanet Hunter AI{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Advanced Starfield Animation using box-shadow technique */
+    #stars1, #stars2, #stars3 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 1px;
+        height: 1px;
+        background: transparent;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Small stars - fast movement */
+    #stars1 {
+        box-shadow: 
+            779px 1331px #FFF, 324px 42px #FFF, 303px 586px #FFF, 1312px 276px #FFF, 451px 625px #FFF,
+            1432px 1937px #FFF, 1414px 1014px #FFF, 1579px 1904px #FFF, 1526px 169px #FFF, 905px 1352px #FFF,
+            168px 1656px #FFF, 1367px 1675px #FFF, 1074px 1531px #FFF, 1819px 1696px #FFF, 236px 968px #FFF,
+            1877px 1579px #FFF, 938px 1762px #FFF, 1783px 1663px #FFF, 1748px 1460px #FFF, 271px 1138px #FFF,
+            1621px 1399px #FFF, 1826px 1046px #FFF, 1393px 1475px #FFF, 1460px 1337px #FFF, 1774px 1719px #FFF,
+            1620px 1702px #FFF, 1932px 1313px #FFF, 1556px 1121px #FFF, 1689px 1490px #FFF, 1766px 1265px #FFF,
+            1463px 1141px #FFF, 1172px 1654px #FFF, 1793px 930px #FFF, 1671px 185px #FFF, 1796px 1256px #FFF,
+            1845px 1750px #FFF, 1646px 1379px #FFF, 1576px 1859px #FFF, 1322px 1838px #FFF, 1311px 1097px #FFF,
+            1229px 1515px #FFF, 1470px 1305px #FFF, 1611px 1999px #FFF, 1230px 1607px #FFF, 1733px 1894px #FFF,
+            1268px 1338px #FFF, 1223px 1738px #FFF, 1682px 1258px #FFF, 1436px 1157px #FFF, 1745px 1413px #FFF,
+            1502px 1342px #FFF, 1619px 1645px #FFF, 1555px 1915px #FFF, 1356px 1139px #FFF, 1793px 1510px #FFF,
+            735px 1296px #FFF, 1306px 1673px #FFF, 1234px 1906px #FFF, 1186px 1157px #FFF, 1119px 1726px #FFF,
+            1434px 1110px #FFF, 1702px 1714px #FFF, 1798px 1537px #FFF, 1421px 1706px #FFF, 1726px 1322px #FFF,
+            1590px 1616px #FFF, 1652px 1788px #FFF, 1580px 1447px #FFF, 1696px 1594px #FFF, 1600px 1924px #FFF,
+            1699px 1190px #FFF, 1501px 1778px #FFF, 1721px 1828px #FFF, 1423px 1746px #FFF, 1498px 1424px #FFF,
+            1566px 1441px #FFF, 1351px 1266px #FFF, 1531px 1976px #FFF, 1693px 1566px #FFF, 1485px 1726px #FFF,
+            1472px 1625px #FFF, 1441px 1454px #FFF, 1694px 1750px #FFF, 1717px 1635px #FFF, 1495px 1351px #FFF,
+            1768px 1915px #FFF, 1461px 1455px #FFF, 1722px 1570px #FFF, 1646px 1819px #FFF, 1555px 1430px #FFF,
+            1644px 1671px #FFF, 1603px 1622px #FFF, 1529px 1901px #FFF, 1648px 1606px #FFF, 1421px 1753px #FFF,
+            1752px 1799px #FFF, 1482px 1445px #FFF, 1496px 1576px #FFF, 1601px 1645px #FFF, 1782px 1395px #FFF;
+        animation: animStar1 150s linear infinite;
+    }
+
+    /* Medium stars - medium speed */
+    #stars2 {
+        box-shadow: 
+            1251px 1564px #FFF, 1457px 1071px #FFF, 1393px 1190px #FFF, 1532px 1477px #FFF, 1217px 1633px #FFF,
+            1726px 1344px #FFF, 1311px 1836px #FFF, 1540px 1506px #FFF, 1500px 1673px #FFF, 1622px 1494px #FFF,
+            1315px 1893px #FFF, 1645px 1395px #FFF, 1476px 1403px #FFF, 1693px 1395px #FFF, 1564px 1553px #FFF,
+            1676px 1680px #FFF, 1662px 1270px #FFF, 1496px 1648px #FFF, 1430px 1849px #FFF, 1597px 1443px #FFF,
+            1633px 1711px #FFF, 1534px 1491px #FFF, 1679px 1682px #FFF, 1439px 1526px #FFF, 1586px 1535px #FFF,
+            1495px 1735px #FFF, 1601px 1524px #FFF, 1660px 1494px #FFF, 1686px 1579px #FFF, 1426px 1733px #FFF,
+            1449px 1624px #FFF, 1669px 1549px #FFF, 1414px 1748px #FFF, 1538px 1650px #FFF, 1647px 1621px #FFF,
+            1515px 1702px #FFF, 1683px 1455px #FFF, 1625px 1568px #FFF, 1487px 1847px #FFF, 1615px 1719px #FFF,
+            1532px 1645px #FFF, 1650px 1543px #FFF, 1456px 1668px #FFF, 1582px 1601px #FFF, 1627px 1488px #FFF,
+            1696px 1615px #FFF, 1447px 1757px #FFF, 1603px 1607px #FFF, 1509px 1784px #FFF, 1656px 1589px #FFF;
+        animation: animStar2 100s linear infinite;
+    }
+
+    /* Large stars - slow movement with twinkle */
+    #stars3 {
+        box-shadow: 
+            1251px 1044px #FFF, 592px 1333px #FFF, 1698px 1123px #FFF, 1521px 1305px #FFF, 1600px 1520px #FFF,
+            1666px 1333px #FFF, 1415px 1556px #FFF, 1545px 1501px #FFF, 1493px 1634px #FFF, 1605px 1431px #FFF,
+            1667px 1602px #FFF, 1535px 1456px #FFF, 1611px 1593px #FFF, 1548px 1679px #FFF, 1455px 1614px #FFF,
+            1569px 1535px #FFF, 1634px 1494px #FFF, 1598px 1645px #FFF, 1472px 1699px #FFF, 1619px 1543px #FFF,
+            1650px 1589px #FFF, 1501px 1732px #FFF, 1586px 1614px #FFF, 1625px 1505px #FFF, 1559px 1671px #FFF;
+        animation: animStar3 80s linear infinite;
+    }
+
+    @keyframes animStar1 {
+        from {
+            transform: translateY(0px);
+        }
+        to {
+            transform: translateY(-2000px);
+        }
+    }
+
+    @keyframes animStar2 {
+        from {
+            transform: translateY(0px);
+        }
+        to {
+            transform: translateY(-2000px);
+        }
+    }
+
+    @keyframes animStar3 {
+        from {
+            transform: translateY(0px);
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+        to {
+            transform: translateY(-2000px);
+            opacity: 1;
+        }
+    }
+
+    /* Ensure content is above stars */
+    .container {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Enhanced card styling for better visibility */
+    .card {
+        background: rgba(26, 31, 58, 0.95) !important;
+    }
+
+    /* Improved form styling */
+    .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+    }
+
+    /* Chart containers */
+    canvas {
+        background: transparent !important;
+    }
+
+    /* Loading animation enhancement */
+    @keyframes spinPulse {
+        0% {
+            transform: rotate(0deg) scale(1);
+        }
+        50% {
+            transform: rotate(180deg) scale(1.1);
+        }
+        100% {
+            transform: rotate(360deg) scale(1);
+        }
+    }
+
+    .spinner-border {
+        animation: spinPulse 1.5s linear infinite;
+    }
+
+    /* Prediction result icon animation */
+    @keyframes resultAppear {
+        0% {
+            transform: scale(0) rotate(-180deg);
+            opacity: 0;
+        }
+        60% {
+            transform: scale(1.2) rotate(10deg);
+        }
+        100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+    }
+
+    .result-icon {
+        animation: resultAppear 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    /* Smooth transitions */
+    .card, .btn {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<!-- Star layers -->
+<div id="stars1"></div>
+<div id="stars2"></div>
+<div id="stars3"></div>
+
 <div class="container">
     <div class="text-center mb-5">
         <h1 class="display-4 fw-bold">
@@ -288,7 +456,7 @@
         const confidence = result.confidence || result.probability;
         
         predictionDiv.innerHTML = `
-            <div class="mb-3">
+            <div class="mb-3 result-icon">
                 <i class="bi bi-${classIcons[prediction]} text-${classColors[prediction]}" style="font-size: 4rem;"></i>
             </div>
             <h3 class="fw-bold">${prediction}</h3>
