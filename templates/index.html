@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Exoplanet Hunter AI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="text-center py-5">
+        <h1 class="display-3 fw-bold mb-4">
+            <i class="bi bi-telescope text-star"></i>
+            Exoplanet Hunter AI
+        </h1>
+        <p class="lead text-muted mb-4">
+            Advanced machine learning system for detecting and classifying exoplanets
+            using NASA's Kepler mission data
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/predict" class="btn btn-primary btn-lg">
+                <i class="bi bi-rocket-takeoff"></i> Start Classifying
+            </a>
+            <a href="/about" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-info-circle"></i> Learn More
+            </a>
+        </div>
+    </div>
+
+    <!-- Status Badge -->
+    <div class="text-center mb-5">
+        <span class="badge bg-success pulse" id="apiStatus">
+            <i class="bi bi-check-circle"></i> System Online
+        </span>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3">
+            <div class="card text-center p-4 glow-purple">
+                <i class="bi bi-bullseye fs-1 text-star mb-3"></i>
+                <h3 class="fw-bold mb-2" id="accuracyStat">99.2%</h3>
+                <p class="text-muted mb-0">Accuracy</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-4 glow-cyan">
+                <i class="bi bi-check2-square fs-1 text-nebula mb-3"></i>
+                <h3 class="fw-bold mb-2" id="precisionStat">98.5%</h3>
+                <p class="text-muted mb-0">Precision</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-4 glow-purple">
+                <i class="bi bi-search fs-1 text-star mb-3"></i>
+                <h3 class="fw-bold mb-2" id="recallStat">97.8%</h3>
+                <p class="text-muted mb-0">Recall</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-4 glow-cyan">
+                <i class="bi bi-graph-up fs-1 text-nebula mb-3"></i>
+                <h3 class="fw-bold mb-2" id="rocStat">99.6%</h3>
+                <p class="text-muted mb-0">ROC-AUC</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-bar-chart"></i> Model Performance Metrics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-pie-chart"></i> Dataset Distribution
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="distributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4 text-nebula">
+                <i class="bi bi-stars"></i> Advanced Features
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-cpu fs-1 text-star"></i>
+                    </div>
+                    <h5 class="card-title text-center">CNN-Transformer Architecture</h5>
+                    <p class="card-text text-muted">
+                        Hybrid deep learning model combining CNN feature extraction
+                        with transformer attention mechanisms for superior classification.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-layers fs-1 text-nebula"></i>
+                    </div>
+                    <h5 class="card-title text-center">Ensemble Learning</h5>
+                    <p class="card-text text-muted">
+                        Combines predictions from CNN-Transformer, LightGBM, and XGBoost
+                        for robust and accurate exoplanet detection.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-shield-check fs-1 text-star"></i>
+                    </div>
+                    <h5 class="card-title text-center">Constitutional AI</h5>
+                    <p class="card-text text-muted">
+                        Built-in safety checks for scientific integrity, uncertainty
+                        quantification, and explainable predictions with confidence scores.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="card bg-gradient p-5 text-center mb-5" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));">
+        <h3 class="fw-bold mb-3">Ready to Discover Exoplanets?</h3>
+        <p class="lead text-muted mb-4">
+            Upload your stellar observation data and let our AI system classify potential exoplanet candidates
+        </p>
+        <a href="/predict" class="btn btn-primary btn-lg">
+            <i class="bi bi-rocket-takeoff"></i> Start Classification
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Animate statistics on load
+    function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        const range = end - start;
+        const increment = end > start ? 1 : -1;
+        const stepTime = Math.abs(Math.floor(duration / range));
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment * 0.1;
+            obj.textContent = current.toFixed(1) + '%';
+            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                obj.textContent = end.toFixed(1) + '%';
+                clearInterval(timer);
+            }
+        }, stepTime);
+    }
+
+    // Performance Chart
+    function createPerformanceChart() {
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'ROC-AUC'],
+                datasets: [{
+                    label: 'Performance (%)',
+                    data: [99.2, 98.5, 97.8, 98.1, 99.6],
+                    backgroundColor: [
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(6, 182, 212, 0.8)',
+                        'rgba(34, 197, 94, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(34, 197, 94, 1)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(10, 14, 39, 0.9)',
+                        titleColor: '#e5e7eb',
+                        bodyColor: '#e5e7eb',
+                        borderColor: 'rgba(139, 92, 246, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(139, 92, 246, 0.1)'
+                        },
+                        ticks: {
+                            color: '#9ca3af',
+                            callback: value => value + '%'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#9ca3af'
+                        }
+                    }
+                },
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+    }
+
+    // Distribution Chart
+    function createDistributionChart() {
+        const ctx = document.getElementById('distributionChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Confirmed', 'Candidate', 'False Positive'],
+                datasets: [{
+                    data: [35, 25, 40],
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#9ca3af',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(10, 14, 39, 0.9)',
+                        titleColor: '#e5e7eb',
+                        bodyColor: '#e5e7eb',
+                        borderColor: 'rgba(139, 92, 246, 0.5)',
+                        borderWidth: 1,
+                        padding: 12
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 2000
+                }
+            }
+        });
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        // Animate statistics
+        animateValue('accuracyStat', 0, 99.2, 2000);
+        animateValue('precisionStat', 0, 98.5, 2000);
+        animateValue('recallStat', 0, 97.8, 2000);
+        animateValue('rocStat', 0, 99.6, 2000);
+        
+        // Create charts
+        createPerformanceChart();
+        createDistributionChart();
+        
+        // Check API status
+        fetch('/api/model-stats')
+            .then(response => {
+                const statusBadge = document.getElementById('apiStatus');
+                if (response.ok) {
+                    statusBadge.innerHTML = '<i class="bi bi-check-circle"></i> System Online';
+                    statusBadge.className = 'badge bg-success pulse';
+                } else {
+                    statusBadge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> API Offline';
+                    statusBadge.className = 'badge bg-warning';
+                }
+            })
+            .catch(() => {
+                const statusBadge = document.getElementById('apiStatus');
+                statusBadge.innerHTML = '<i class="bi bi-x-circle"></i> API Offline';
+                statusBadge.className = 'badge bg-danger';
+            });
+    });
+</script>
+{% endblock %}

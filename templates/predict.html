@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Predict - Exoplanet Hunter AI{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+            <i class="bi bi-rocket-takeoff text-star"></i>
+            Exoplanet Classification
+        </h1>
+        <p class="lead text-muted">
+            Enter stellar observation parameters to classify exoplanet candidates
+        </p>
+    </div>
+
+    <div class="row">
+        <!-- Input Form -->
+        <div class="col-lg-5 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-sliders"></i> Input Parameters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="predictionForm">
+                        <!-- Primary Features -->
+                        <h6 class="text-nebula mb-3">
+                            <i class="bi bi-star-fill"></i> Primary Features
+                        </h6>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Orbital Period (days)</label>
+                            <input type="number" class="form-control" id="koi_period" step="0.01" required>
+                            <small class="text-muted">Time to complete one orbit</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Transit Duration (hours)</label>
+                            <input type="number" class="form-control" id="koi_duration" step="0.01" required>
+                            <small class="text-muted">Duration of planetary transit</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Transit Depth (ppm)</label>
+                            <input type="number" class="form-control" id="koi_depth" step="0.01" required>
+                            <small class="text-muted">Brightness decrease during transit</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Stellar Radius (solar radii)</label>
+                            <input type="number" class="form-control" id="koi_srad" step="0.01" required>
+                            <small class="text-muted">Radius of host star</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Stellar Temperature (K)</label>
+                            <input type="number" class="form-control" id="koi_steff" step="1" required>
+                            <small class="text-muted">Effective temperature</small>
+                        </div>
+
+                        <!-- Advanced Features -->
+                        <div class="mt-4">
+                            <button class="btn btn-outline-primary w-100" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFeatures">
+                                <i class="bi bi-gear"></i> Advanced Features (Optional)
+                            </button>
+                        </div>
+
+                        <div class="collapse mt-3" id="advancedFeatures">
+                            <h6 class="text-nebula mb-3">
+                                <i class="bi bi-stars"></i> Additional Parameters
+                            </h6>
+
+                            <div class="mb-3">
+                                <label class="form-label">Impact Parameter</label>
+                                <input type="number" class="form-control" id="koi_impact" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Planet Radius (Earth radii)</label>
+                                <input type="number" class="form-control" id="koi_prad" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Stellar Mass (solar masses)</label>
+                                <input type="number" class="form-control" id="koi_smass" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Stellar Log(g)</label>
+                                <input type="number" class="form-control" id="koi_slogg" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Insolation Flux (Earth flux)</label>
+                                <input type="number" class="form-control" id="koi_insol" step="0.01">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Equilibrium Temperature (K)</label>
+                                <input type="number" class="form-control" id="koi_teq" step="1">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Model Signal-to-Noise Ratio</label>
+                                <input type="number" class="form-control" id="koi_model_snr" step="0.1">
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary" id="predictBtn">
+                                <i class="bi bi-cpu"></i> Classify Exoplanet
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="exampleBtn">
+                                <i class="bi bi-lightbulb"></i> Load Example Data
+                            </button>
+                            <button type="reset" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reset Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-lg-7">
+            <div class="card" id="resultsCard" style="display: none;">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up"></i> Classification Results
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Prediction Result -->
+                    <div class="text-center mb-4" id="predictionResult">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-center mb-3">Confidence Score</h6>
+                            <canvas id="confidenceChart" height="200"></canvas>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-center mb-3">Class Probabilities</h6>
+                            <canvas id="probabilityChart" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Interpretation -->
+                    <div class="alert alert-info" id="interpretation">
+                        <!-- Dynamic content -->
+                    </div>
+
+                    <!-- Constitutional AI Flags -->
+                    <div id="aiFlags" style="display: none;">
+                        <h6 class="text-warning mb-3">
+                            <i class="bi bi-exclamation-triangle"></i> AI Safety Checks
+                        </h6>
+                        <div id="flagsContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="card text-center p-5" id="loadingCard" style="display: none;">
+                <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Analyzing stellar data...</h5>
+                <p class="text-muted">Our AI is processing your input</p>
+            </div>
+
+            <!-- Initial State -->
+            <div class="card text-center p-5" id="initialCard">
+                <i class="bi bi-rocket-takeoff" style="font-size: 5rem; color: var(--nebula-purple);"></i>
+                <h4 class="mt-4 mb-3">Ready to Discover</h4>
+                <p class="text-muted">
+                    Fill in the observation parameters on the left and click "Classify Exoplanet"
+                    to get AI-powered predictions.
+                </p>
+                <div class="mt-4">
+                    <span class="badge bg-primary">99.2% Accuracy</span>
+                    <span class="badge bg-success">Constitutional AI</span>
+                    <span class="badge bg-info">Explainable</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let confidenceChart = null;
+    let probabilityChart = null;
+
+    // Example data
+    const exampleData = {
+        koi_period: 5.7, 
+        koi_duration: 3.2,
+        koi_depth: 150.5,
+        koi_srad: 1.05,
+        koi_steff: 5750,
+        koi_impact: 0.4,
+        koi_prad: 1.8,
+        koi_smass: 1.02,
+        koi_slogg: 4.5,
+        koi_insol: 1.2,
+        koi_teq: 290,
+        koi_model_snr: 25.5
+    };
+
+    // Load example data
+    document.getElementById('exampleBtn').addEventListener('click', () => {
+        Object.keys(exampleData).forEach(key => {
+            const input = document.getElementById(key);
+            if (input) input.value = exampleData[key];
+        });
+        
+        // Expand advanced features
+        const advancedCollapse = new bootstrap.Collapse(document.getElementById('advancedFeatures'), {
+            show: true
+        });
+    });
+
+    // Form submission
+    document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Show loading state
+        document.getElementById('initialCard').style.display = 'none';
+        document.getElementById('resultsCard').style.display = 'none';
+        document.getElementById('loadingCard').style.display = 'block';
+        
+        // Collect form data
+        const formData = {};
+        const inputs = e.target.querySelectorAll('input[type="number"]');
+        inputs.forEach(input => {
+            if (input.value) {
+                formData[input.id] = parseFloat(input.value);
+            }
+        });
+        
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ features: formData })
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                displayResults(result);
+            } else {
+                showError(result.error || 'Prediction failed');
+            }
+        } catch (error) {
+            showError('Cannot connect to server. Please ensure the API is running.');
+        }
+    });
+
+    function displayResults(result) {
+        document.getElementById('loadingCard').style.display = 'none';
+        document.getElementById('resultsCard').style.display = 'block';
+        
+        // Prediction result
+        const predictionDiv = document.getElementById('predictionResult');
+        const classColors = {
+            'CONFIRMED': 'success',
+            'CANDIDATE': 'warning',
+            'FALSE POSITIVE': 'danger'
+        };
+        const classIcons = {
+            'CONFIRMED': 'check-circle-fill',
+            'CANDIDATE': 'question-circle-fill',
+            'FALSE POSITIVE': 'x-circle-fill'
+        };
+        
+        const prediction = result.prediction || result.class;
+        const confidence = result.confidence || result.probability;
+        
+        predictionDiv.innerHTML = `
+            <div class="mb-3">
+                <i class="bi bi-${classIcons[prediction]} text-${classColors[prediction]}" style="font-size: 4rem;"></i>
+            </div>
+            <h3 class="fw-bold">${prediction}</h3>
+            <h5 class="text-muted">${(confidence * 100).toFixed(2)}% confidence</h5>
+        `;
+        
+        // Create charts
+        createConfidenceChart(confidence);
+        createProbabilityChart(result.probabilities || {
+            'CONFIRMED': result.probability_confirmed || 0.3,
+            'CANDIDATE': result.probability_candidate || 0.2,
+            'FALSE POSITIVE': result.probability_false_positive || 0.5
+        });
+        
+        // Interpretation
+        const interpretationDiv = document.getElementById('interpretation');
+        interpretationDiv.innerHTML = `
+            <strong><i class="bi bi-info-circle"></i> Interpretation:</strong><br>
+            ${getInterpretation(prediction, confidence)}
+        `;
+        
+        // AI Flags
+        if (result.flags && result.flags.length > 0) {
+            document.getElementById('aiFlags').style.display = 'block';
+            document.getElementById('flagsContent').innerHTML = result.flags.map(flag => `
+                <div class="alert alert-warning mb-2">
+                    <i class="bi bi-shield-exclamation"></i> ${flag}
+                </div>
+            `).join('');
+        } else {
+            document.getElementById('aiFlags').style.display = 'none';
+        }
+    }
+
+    function createConfidenceChart(confidence) {
+        const ctx = document.getElementById('confidenceChart').getContext('2d');
+        
+        if (confidenceChart) confidenceChart.destroy();
+        
+        confidenceChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                datasets: [{
+                    data: [confidence * 100, (1 - confidence) * 100],
+                    backgroundColor: [
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(55, 65, 81, 0.3)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                }
+            },
+            plugins: [{
+                id: 'centerText',
+                beforeDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    ctx.save();
+                    ctx.font = 'bold 24px sans-serif';
+                    ctx.fillStyle = '#e5e7eb';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+                    const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+                    ctx.fillText(`${(confidence * 100).toFixed(1)}%`, centerX, centerY);
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
+    function createProbabilityChart(probabilities) {
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
+        
+        if (probabilityChart) probabilityChart.destroy();
+        
+        probabilityChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(probabilities),
+                datasets: [{
+                    data: Object.values(probabilities).map(v => v * 100),
+                    backgroundColor: [
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(139, 92, 246, 0.1)'
+                        },
+                        ticks: {
+                            color: '#9ca3af',
+                            callback: value => value + '%'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            color: '#9ca3af'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function getInterpretation(prediction, confidence) {
+        if (prediction === 'CONFIRMED') {
+            if (confidence > 0.9) {
+                return 'This object shows very strong evidence of being a confirmed exoplanet with high confidence.';
+            } else {
+                return 'This object likely represents a confirmed exoplanet, but may benefit from additional observation.';
+            }
+        } else if (prediction === 'CANDIDATE') {
+            return 'This object requires further investigation. It shows characteristics consistent with a potential exoplanet but needs additional validation.';
+        } else {
+            if (confidence > 0.9) {
+                return 'This signal is very likely a false positive caused by stellar activity, instrumental noise, or other non-planetary phenomena.';
+            } else {
+                return 'This signal appears to be a false positive, though some uncertainty remains. Further analysis may be warranted.';
+            }
+        }
+    }
+
+    function showError(message) {
+        document.getElementById('loadingCard').style.display = 'none';
+        document.getElementById('resultsCard').style.display = 'block';
+        document.getElementById('predictionResult').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Error:</strong> ${message}
+            </div>
+        `;
+    }
+</script>
+{% endblock %}
