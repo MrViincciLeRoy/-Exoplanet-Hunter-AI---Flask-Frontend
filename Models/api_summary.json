@@ -1,0 +1,47 @@
+{
+  "model_info": {
+    "name": "LightGBM",
+    "version": "1.0",
+    "trained_on": "Kepler Cumulative Dataset",
+    "last_updated": "2025-10-01T16:17:43.219611"
+  },
+  "input_features": [
+    "koi_score",
+    "koi_depth",
+    "koi_teq",
+    "koi_prad",
+    "koi_smass",
+    "koi_srad",
+    "koi_steff",
+    "koi_model_snr",
+    "koi_slogg",
+    "koi_insol",
+    "koi_duration",
+    "koi_period"
+  ],
+  "output_classes": [
+    "CANDIDATE",
+    "CONFIRMED",
+    "FALSE POSITIVE"
+  ],
+  "performance_metrics": {
+    "accuracy": 0.8348,
+    "precision": 0.8014,
+    "recall": 0.8045,
+    "f1_score": 0.8024
+  },
+  "example_input": {
+    "koi_score": -1.038596639035712,
+    "koi_depth": -0.282753970576092,
+    "koi_teq": -0.0254685096213874,
+    "koi_prad": -0.0326183923713772,
+    "koi_smass": -0.4520503457482758,
+    "koi_srad": -0.1197252212753642,
+    "koi_steff": -0.0200305240595496,
+    "koi_model_snr": -0.2881058325485254,
+    "koi_slogg": 0.2228318145504819,
+    "koi_insol": -0.0466602660176585,
+    "koi_duration": 0.2858006825342803,
+    "koi_period": -0.048621164455613
+  }
+}
