@@ -20,8 +20,7 @@
             --star-gold: #fbbf24;
             --planet-cyan: #06b6d4;
             --text-light: #e5e7eb;
-            /* FIX: Changed --text-muted from #9ca3af to a much lighter gray (#c0c0c0) for better contrast on dark backgrounds. */
-            --text-muted: #c0c0c0;
+            --text-muted: #d1d5db;
         }
         
         * {
@@ -39,14 +38,14 @@
             overflow-x: hidden;
         }
         
-        /* Animated stars background */
+        /* Fixed animated stars background */
         body::before {
             content: '';
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 200%;
+            height: 200%;
             background-image: 
                 radial-gradient(2px 2px at 20% 30%, white, transparent),
                 radial-gradient(2px 2px at 60% 70%, white, transparent),
@@ -54,17 +53,52 @@
                 radial-gradient(1px 1px at 80% 10%, white, transparent),
                 radial-gradient(2px 2px at 90% 60%, white, transparent),
                 radial-gradient(1px 1px at 33% 75%, white, transparent),
-                radial-gradient(1px 1px at 15% 85%, white, transparent);
-            background-size: 200% 200%;
-            background-position: 0% 0%;
-            animation: stars 120s linear infinite;
+                radial-gradient(1px 1px at 15% 85%, white, transparent),
+                radial-gradient(1px 1px at 40% 20%, white, transparent),
+                radial-gradient(2px 2px at 70% 40%, white, transparent),
+                radial-gradient(1px 1px at 25% 60%, white, transparent);
+            background-size: 400px 400px, 350px 350px, 300px 300px, 400px 400px, 350px 350px, 
+                             300px 300px, 400px 400px, 350px 350px, 300px 300px, 400px 400px;
+            background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 200px 150px,
+                                50px 180px, 150px 50px, 250px 200px, 100px 250px, 300px 100px;
+            animation: stars 60s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
+        }
+        
+        /* Additional twinkling stars layer */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 45% 85%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 30% 45%, rgba(255,255,255,0.8), transparent);
+            background-size: 500px 500px;
+            animation: twinkle 3s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
         }
         
         @keyframes stars {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-100vh); }
+            0% { 
+                transform: translateY(0) translateX(0); 
+            }
+            100% { 
+                transform: translateY(-400px) translateX(-100px); 
+            }
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
         
         /* Content wrapper */
@@ -156,6 +190,13 @@
             background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
             border-bottom: 1px solid rgba(139, 92, 246, 0.3);
             font-weight: 600;
+            color: var(--text-light) !important;
+        }
+        
+        .card-header h5,
+        .card-header h4,
+        .card-header h6 {
+            color: var(--text-light) !important;
         }
         
         /* Buttons */
@@ -201,6 +242,10 @@
             border-color: var(--nebula-purple);
             box-shadow: 0 0 0 0.2rem rgba(139, 92, 246, 0.25);
             color: var(--text-light);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
         }
         
         .form-label {
@@ -272,18 +317,22 @@
             font-weight: 600;
         }
         
-        /* Text colors */
+        /* Text colors - FIXED */
         .text-muted {
-            /* Now uses the lighter --text-muted from :root */
             color: var(--text-muted) !important;
         }
         
         .text-nebula {
-            color: var(--nebula-purple);
+            color: var(--nebula-purple) !important;
         }
         
         .text-star {
-            color: var(--star-gold);
+            color: var(--star-gold) !important;
+        }
+        
+        /* Fix for small helper text */
+        small.text-muted {
+            color: #9ca3af !important;
         }
     </style>
     
@@ -372,4 +421,4 @@
     
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+    </html>
