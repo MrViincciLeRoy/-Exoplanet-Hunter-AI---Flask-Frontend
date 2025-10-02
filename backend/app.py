@@ -1,6 +1,6 @@
 """
-🪐 Exoplanet Hunter AI - FastAPI Backend
-High-performance API for exoplanet classification
+Exoplanet Hunter AI - FastAPI Backend
+High-performance API for advanced exoplanet classification
 """
 
 from fastapi import FastAPI, HTTPException, status
@@ -9,9 +9,15 @@ from pydantic import BaseModel, Field, validator
 from typing import Dict, List, Optional
 import pickle
 import numpy as np
+import pandas as pd
 import logging
 from pathlib import Path
 import json
+import tensorflow as tf
+from tensorflow import keras
+import joblib
+import warnings
+warnings.filterwarnings('ignore')
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +27,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Exoplanet Hunter AI API",
     description="Advanced machine learning API for exoplanet detection and classification",
-    version="1.0.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -88,7 +94,7 @@ class ExoplanetFeatures(BaseModel):
         }
 
 class PredictionRequest(BaseModel):
-    """Request body for batch predictions"""
+    """Request body for predictions"""
     features: ExoplanetFeatures
 
 class PredictionResponse(BaseModel):
@@ -106,90 +112,146 @@ class HealthResponse(BaseModel):
     version: str
     models_loaded: bool
     feature_count: int
+    model_type: str
 
 # ============================================================================
 # MODEL LOADING
 # ============================================================================
 
 class ModelManager:
-    """Manages loading and inference of ML models"""
+    """Manages loading and inference of advanced ML models"""
     
     def __init__(self):
-        self.model = None
+        self.cnn_transformer = None
+        self.ensemble_model = None
+        self.constitutional_wrapper = None
         self.scaler = None
         self.imputer = None
         self.label_encoder = None
-        self.feature_config = None
-        self.class_names = ['CONFIRMED', 'CANDIDATE', 'FALSE POSITIVE']
+        self.feature_names = None
+        self.class_names = ['CANDIDATE', 'CONFIRMED', 'FALSE POSITIVE']
+        self.use_advanced = False
         
     def load_models(self):
         """Load all required models and preprocessors"""
         try:
             models_dir = Path(__file__).parent / "models"
+            advanced_dir = models_dir / "advanced_system"
             
-            # Load main model
-            model_path = models_dir / "final_model.pkl"
-            if model_path.exists():
-                with open(model_path, 'rb') as f:
-                    self.model = pickle.load(f)
-                logger.info("✓ Main model loaded successfully")
-            else:
-                logger.warning(f"Model not found at {model_path}")
+            # Load label encoder first (critical for class mapping)
+            encoder_path = models_dir / "label_encoder.pkl"
+            if encoder_path.exists():
+                self.label_encoder = joblib.load(encoder_path)
+                self.class_names = self.label_encoder.classes_.tolist()
+                logger.info(f"✓ Label encoder loaded: {self.class_names}")
+            
+            # Try to load advanced system
+            if advanced_dir.exists():
+                logger.info("Attempting to load advanced model system...")
+                
+                # Load feature names
+                feature_path = advanced_dir / "feature_names.pkl"
+                if feature_path.exists():
+                    self.feature_names = joblib.load(feature_path)
+                    logger.info(f"✓ Feature names loaded ({len(self.feature_names)} features)")
+                else:
+                    # Fallback to training data
+                    train_path = Path(__file__).parent / "data" / "processed" / "X_train.csv"
+                    if train_path.exists():
+                        X_train = pd.read_csv(train_path)
+                        self.feature_names = X_train.columns.tolist()
+                        logger.info(f"✓ Features inferred from training data")
+                
+                # Load CNN-Transformer
+                cnn_path = advanced_dir / "cnn_transformer.keras"
+                if cnn_path.exists() and self.feature_names:
+                    # Import model classes
+                    from advanced_model import CNNTransformerExoplanetDetector
+                    
+                    self.cnn_transformer = CNNTransformerExoplanetDetector(
+                        n_features=len(self.feature_names),
+                        n_classes=len(self.class_names)
+                    )
+                    self.cnn_transformer.model = keras.models.load_model(
+                        str(cnn_path),
+                        compile=False
+                    )
+                    logger.info("✓ CNN-Transformer loaded")
+                
+                # Load ensemble
+                ensemble_path = advanced_dir / "ensemble.pkl"
+                if ensemble_path.exists():
+                    self.ensemble_model = joblib.load(ensemble_path)
+                    logger.info("✓ Ensemble model loaded")
+                
+                # Load constitutional wrapper
+                const_path = advanced_dir / "constitutional.pkl"
+                if const_path.exists():
+                    self.constitutional_wrapper = joblib.load(const_path)
+                    logger.info("✓ Constitutional AI loaded")
+                
+                # Check if advanced system fully loaded
+                if all([self.cnn_transformer, self.ensemble_model, self.constitutional_wrapper]):
+                    self.use_advanced = True
+                    logger.info("✅ Advanced system fully loaded!")
+            
+            # Fallback to original model
+            if not self.use_advanced:
+                logger.info("Loading fallback model...")
+                model_path = models_dir / "final_model.pkl"
+                if model_path.exists():
+                    self.ensemble_model = joblib.load(model_path)
+                    logger.info("✓ Fallback model loaded")
             
             # Load scaler
             scaler_path = models_dir / "scaler.pkl"
             if scaler_path.exists():
-                with open(scaler_path, 'rb') as f:
-                    self.scaler = pickle.load(f)
-                logger.info("✓ Scaler loaded successfully")
+                self.scaler = joblib.load(scaler_path)
+                logger.info("✓ Scaler loaded")
             
             # Load imputer
             imputer_path = models_dir / "imputer.pkl"
             if imputer_path.exists():
-                with open(imputer_path, 'rb') as f:
-                    self.imputer = pickle.load(f)
-                logger.info("✓ Imputer loaded successfully")
-            
-            # Load label encoder
-            encoder_path = models_dir / "label_encoder.pkl"
-            if encoder_path.exists():
-                with open(encoder_path, 'rb') as f:
-                    self.label_encoder = pickle.load(f)
-                logger.info("✓ Label encoder loaded successfully")
-            
-            # Load feature config
-            config_path = Path(__file__).parent / "data" / "processed" / "feature_config.json"
-            if config_path.exists():
-                with open(config_path, 'r') as f:
-                    self.feature_config = json.load(f)
-                logger.info("✓ Feature config loaded successfully")
+                self.imputer = joblib.load(imputer_path)
+                logger.info("✓ Imputer loaded")
             
             return True
             
         except Exception as e:
             logger.error(f"Error loading models: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def prepare_features(self, features: ExoplanetFeatures) -> np.ndarray:
         """Prepare input features for model inference"""
-        # Define feature order (must match training)
-        feature_names = [
-            'koi_period', 'koi_duration', 'koi_depth', 'koi_srad', 'koi_steff',
-            'koi_impact', 'koi_prad', 'koi_smass', 'koi_slogg', 
-            'koi_insol', 'koi_teq', 'koi_model_snr'
-        ]
-        
-        # Extract features in correct order
-        feature_dict = features.dict()
-        feature_values = []
-        
-        for fname in feature_names:
-            value = feature_dict.get(fname)
-            # Use NaN for missing optional features
-            feature_values.append(value if value is not None else np.nan)
-        
-        # Convert to numpy array
-        X = np.array(feature_values).reshape(1, -1)
+        # If we have feature names from advanced model, use those
+        if self.feature_names:
+            feature_dict = features.dict()
+            feature_values = []
+            
+            for fname in self.feature_names:
+                # Try to extract the feature value
+                value = feature_dict.get(fname)
+                feature_values.append(value if value is not None else np.nan)
+            
+            X = np.array(feature_values).reshape(1, -1)
+        else:
+            # Fallback: use standard feature order
+            feature_names = [
+                'koi_period', 'koi_duration', 'koi_depth', 'koi_srad', 'koi_steff',
+                'koi_impact', 'koi_prad', 'koi_smass', 'koi_slogg', 
+                'koi_insol', 'koi_teq', 'koi_model_snr'
+            ]
+            
+            feature_dict = features.dict()
+            feature_values = []
+            
+            for fname in feature_names:
+                value = feature_dict.get(fname)
+                feature_values.append(value if value is not None else np.nan)
+            
+            X = np.array(feature_values).reshape(1, -1)
         
         # Apply imputer if available (handles missing values)
         if self.imputer is not None:
@@ -203,25 +265,37 @@ class ModelManager:
     
     def predict(self, features: ExoplanetFeatures) -> Dict:
         """Make prediction with constitutional AI checks"""
-        if self.model is None:
+        if self.ensemble_model is None:
             raise RuntimeError("Model not loaded")
         
         # Prepare features
         X = self.prepare_features(features)
         
-        # Get prediction and probabilities
-        prediction_idx = self.model.predict(X)[0]
-        probabilities = self.model.predict_proba(X)[0]
+        # Make prediction based on model type
+        if self.use_advanced and self.cnn_transformer:
+            # Advanced system prediction
+            cnn_proba = self.cnn_transformer.predict_proba(X)[0]
+            ensemble_proba = self.ensemble_model.predict_proba(X)[0]
+            
+            # Combine predictions (weighted average)
+            probabilities = 0.5 * cnn_proba + 0.5 * ensemble_proba
+            prediction_idx = np.argmax(probabilities)
+            
+            # Get uncertainty from CNN-Transformer if available
+            if hasattr(self.cnn_transformer, 'predict_with_uncertainty'):
+                _, total_unc, _, _ = self.cnn_transformer.predict_with_uncertainty(X, n_samples=50)
+                uncertainty = float(np.mean(total_unc[0]))
+            else:
+                uncertainty = 1.0 - float(np.max(probabilities))
+        else:
+            # Standard model prediction
+            probabilities = self.ensemble_model.predict_proba(X)[0]
+            prediction_idx = np.argmax(probabilities)
+            uncertainty = 1.0 - float(np.max(probabilities))
         
         # Get class name
-        if self.label_encoder is not None:
-            predicted_class = self.label_encoder.inverse_transform([prediction_idx])[0]
-        else:
-            predicted_class = self.class_names[prediction_idx]
-        
-        # Calculate confidence and uncertainty
+        predicted_class = self.class_names[prediction_idx]
         confidence = float(np.max(probabilities))
-        uncertainty = 1.0 - confidence
         
         # Create probability dictionary
         prob_dict = {
@@ -231,25 +305,32 @@ class ModelManager:
         
         # Constitutional AI checks
         flags = []
-        explanation = None
+        explanation = []
         
         # Check for high uncertainty
         if uncertainty > 0.4:
             flags.append("HIGH_UNCERTAINTY")
-            explanation = f"High uncertainty ({uncertainty:.3f}). Recommend human review."
+            explanation.append(f"High uncertainty ({uncertainty:.3f}). Recommend human review.")
         
         # Check for ambiguous predictions
         sorted_probs = sorted(probabilities, reverse=True)
-        if len(sorted_probs) > 1 and sorted_probs[0] - sorted_probs[1] < 0.1:
+        if len(sorted_probs) > 1 and sorted_probs[0] - sorted_probs[1] < 0.15:
             flags.append("AMBIGUOUS_PREDICTION")
-            if explanation:
-                explanation += " Multiple classes have similar probabilities."
-            else:
-                explanation = "Multiple classes have similar probabilities."
+            explanation.append("Multiple classes have similar probabilities.")
+        
+        # Check for CONFIRMED class with low confidence
+        if predicted_class == "CONFIRMED" and confidence < 0.85:
+            flags.append("LOW_CONFIDENCE_CONFIRMED")
+            explanation.append("CONFIRMED classification requires ≥85% confidence for scientific rigor.")
         
         # Check for unusual input values
         if features.koi_prad and features.koi_prad > 20:
             flags.append("UNUSUAL_PLANET_SIZE")
+            explanation.append("Planet radius exceeds typical values.")
+        
+        if features.koi_period and features.koi_period < 0.5:
+            flags.append("ULTRA_SHORT_PERIOD")
+            explanation.append("Ultra-short orbital period detected.")
         
         return {
             "prediction": predicted_class,
@@ -257,7 +338,7 @@ class ModelManager:
             "probabilities": prob_dict,
             "uncertainty": uncertainty,
             "flags": flags,
-            "explanation": explanation
+            "explanation": " ".join(explanation) if explanation else None
         }
 
 # Initialize model manager
@@ -270,7 +351,7 @@ model_manager = ModelManager()
 @app.on_event("startup")
 async def startup_event():
     """Load models on startup"""
-    logger.info("🚀 Starting Exoplanet Hunter AI API...")
+    logger.info("Starting Exoplanet Hunter AI API...")
     success = model_manager.load_models()
     if success:
         logger.info("✓ All models loaded successfully")
@@ -280,7 +361,7 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
-    logger.info("👋 Shutting down Exoplanet Hunter AI API...")
+    logger.info("Shutting down Exoplanet Hunter AI API...")
 
 # ============================================================================
 # API ENDPOINTS
@@ -290,8 +371,8 @@ async def shutdown_event():
 async def root():
     """Root endpoint"""
     return {
-        "message": "🪐 Exoplanet Hunter AI API",
-        "version": "1.0.0",
+        "message": "Exoplanet Hunter AI API",
+        "version": "2.0.0",
         "docs": "/docs",
         "health": "/health"
     }
@@ -301,9 +382,10 @@ async def health_check():
     """Health check endpoint"""
     return {
         "status": "healthy",
-        "version": "1.0.0",
-        "models_loaded": model_manager.model is not None,
-        "feature_count": 12
+        "version": "2.0.0",
+        "models_loaded": model_manager.ensemble_model is not None,
+        "feature_count": len(model_manager.feature_names) if model_manager.feature_names else 12,
+        "model_type": "Advanced CNN-Transformer + Ensemble" if model_manager.use_advanced else "Standard Ensemble"
     }
 
 @app.post("/predict", response_model=PredictionResponse, tags=["Prediction"])
@@ -328,6 +410,8 @@ async def predict(request: PredictionRequest):
         )
     except Exception as e:
         logger.error(f"Prediction error: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Prediction failed: {str(e)}"
@@ -336,18 +420,20 @@ async def predict(request: PredictionRequest):
 @app.get("/model-info", tags=["Model"])
 async def model_info():
     """Get information about the loaded model"""
-    if model_manager.model is None:
+    if model_manager.ensemble_model is None:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Model not loaded"
         )
     
     return {
-        "model_type": type(model_manager.model).__name__,
+        "model_type": "Advanced CNN-Transformer + Ensemble" if model_manager.use_advanced else "Standard Ensemble",
         "classes": model_manager.class_names,
-        "feature_count": 12,
+        "feature_count": len(model_manager.feature_names) if model_manager.feature_names else 12,
         "scaler_loaded": model_manager.scaler is not None,
-        "imputer_loaded": model_manager.imputer is not None
+        "imputer_loaded": model_manager.imputer is not None,
+        "cnn_transformer_loaded": model_manager.cnn_transformer is not None,
+        "constitutional_ai_enabled": model_manager.constitutional_wrapper is not None
     }
 
 @app.get("/features", tags=["Model"])
