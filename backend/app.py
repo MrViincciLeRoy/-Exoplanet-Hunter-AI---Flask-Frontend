@@ -1,6 +1,7 @@
 """
 Exoplanet Hunter AI - FastAPI Backend
 High-performance API for advanced exoplanet classification
+Works standalone without advanced_model.py source code
 """
 
 from fastapi import FastAPI, HTTPException, status
@@ -122,7 +123,7 @@ class ModelManager:
     """Manages loading and inference of advanced ML models"""
     
     def __init__(self):
-        self.cnn_transformer = None
+        self.cnn_transformer_model = None
         self.ensemble_model = None
         self.constitutional_wrapper = None
         self.scaler = None
@@ -143,7 +144,7 @@ class ModelManager:
             if encoder_path.exists():
                 self.label_encoder = joblib.load(encoder_path)
                 self.class_names = self.label_encoder.classes_.tolist()
-                logger.info(f"✓ Label encoder loaded: {self.class_names}")
+                logger.info(f"Label encoder loaded: {self.class_names}")
             
             # Try to load advanced system
             if advanced_dir.exists():
@@ -153,47 +154,43 @@ class ModelManager:
                 feature_path = advanced_dir / "feature_names.pkl"
                 if feature_path.exists():
                     self.feature_names = joblib.load(feature_path)
-                    logger.info(f"✓ Feature names loaded ({len(self.feature_names)} features)")
+                    logger.info(f"Feature names loaded ({len(self.feature_names)} features)")
                 else:
                     # Fallback to training data
                     train_path = Path(__file__).parent / "data" / "processed" / "X_train.csv"
                     if train_path.exists():
                         X_train = pd.read_csv(train_path)
                         self.feature_names = X_train.columns.tolist()
-                        logger.info(f"✓ Features inferred from training data")
+                        logger.info(f"Features inferred from training data")
                 
-                # Load CNN-Transformer
+                # Load CNN-Transformer (just the Keras model, no custom classes needed)
                 cnn_path = advanced_dir / "cnn_transformer.keras"
-                if cnn_path.exists() and self.feature_names:
-                    # Import model classes
-                    from advanced_model import CNNTransformerExoplanetDetector
-                    
-                    self.cnn_transformer = CNNTransformerExoplanetDetector(
-                        n_features=len(self.feature_names),
-                        n_classes=len(self.class_names)
-                    )
-                    self.cnn_transformer.model = keras.models.load_model(
-                        str(cnn_path),
-                        compile=False
-                    )
-                    logger.info("✓ CNN-Transformer loaded")
+                if cnn_path.exists():
+                    try:
+                        self.cnn_transformer_model = keras.models.load_model(
+                            str(cnn_path),
+                            compile=False
+                        )
+                        logger.info("CNN-Transformer loaded")
+                    except Exception as e:
+                        logger.warning(f"Could not load CNN-Transformer: {e}")
                 
                 # Load ensemble
                 ensemble_path = advanced_dir / "ensemble.pkl"
                 if ensemble_path.exists():
                     self.ensemble_model = joblib.load(ensemble_path)
-                    logger.info("✓ Ensemble model loaded")
+                    logger.info("Ensemble model loaded")
                 
-                # Load constitutional wrapper
+                # Load constitutional wrapper (just for threshold, we'll reimplement logic)
                 const_path = advanced_dir / "constitutional.pkl"
                 if const_path.exists():
                     self.constitutional_wrapper = joblib.load(const_path)
-                    logger.info("✓ Constitutional AI loaded")
+                    logger.info("Constitutional AI config loaded")
                 
                 # Check if advanced system fully loaded
-                if all([self.cnn_transformer, self.ensemble_model, self.constitutional_wrapper]):
+                if self.cnn_transformer_model and self.ensemble_model:
                     self.use_advanced = True
-                    logger.info("✅ Advanced system fully loaded!")
+                    logger.info("Advanced system fully loaded!")
             
             # Fallback to original model
             if not self.use_advanced:
@@ -201,19 +198,30 @@ class ModelManager:
                 model_path = models_dir / "final_model.pkl"
                 if model_path.exists():
                     self.ensemble_model = joblib.load(model_path)
-                    logger.info("✓ Fallback model loaded")
+                    logger.info("Fallback model loaded")
+                elif models_dir.exists():
+                    # Try to find any .pkl model file
+                    pkl_files = list(models_dir.glob("*.pkl"))
+                    for pkl_file in pkl_files:
+                        if "model" in pkl_file.name.lower():
+                            try:
+                                self.ensemble_model = joblib.load(pkl_file)
+                                logger.info(f"Loaded model from {pkl_file.name}")
+                                break
+                            except:
+                                continue
             
             # Load scaler
             scaler_path = models_dir / "scaler.pkl"
             if scaler_path.exists():
                 self.scaler = joblib.load(scaler_path)
-                logger.info("✓ Scaler loaded")
+                logger.info("Scaler loaded")
             
             # Load imputer
             imputer_path = models_dir / "imputer.pkl"
             if imputer_path.exists():
                 self.imputer = joblib.load(imputer_path)
-                logger.info("✓ Imputer loaded")
+                logger.info("Imputer loaded")
             
             return True
             
@@ -272,21 +280,17 @@ class ModelManager:
         X = self.prepare_features(features)
         
         # Make prediction based on model type
-        if self.use_advanced and self.cnn_transformer:
+        if self.use_advanced and self.cnn_transformer_model:
             # Advanced system prediction
-            cnn_proba = self.cnn_transformer.predict_proba(X)[0]
+            cnn_proba = self.cnn_transformer_model.predict(X, verbose=0)[0]
             ensemble_proba = self.ensemble_model.predict_proba(X)[0]
             
             # Combine predictions (weighted average)
             probabilities = 0.5 * cnn_proba + 0.5 * ensemble_proba
             prediction_idx = np.argmax(probabilities)
             
-            # Get uncertainty from CNN-Transformer if available
-            if hasattr(self.cnn_transformer, 'predict_with_uncertainty'):
-                _, total_unc, _, _ = self.cnn_transformer.predict_with_uncertainty(X, n_samples=50)
-                uncertainty = float(np.mean(total_unc[0]))
-            else:
-                uncertainty = 1.0 - float(np.max(probabilities))
+            # Simple uncertainty estimation
+            uncertainty = 1.0 - float(np.max(probabilities))
         else:
             # Standard model prediction
             probabilities = self.ensemble_model.predict_proba(X)[0]
@@ -303,12 +307,16 @@ class ModelManager:
             for i in range(len(self.class_names))
         }
         
-        # Constitutional AI checks
+        # Constitutional AI checks (reimplemented)
         flags = []
         explanation = []
         
         # Check for high uncertainty
-        if uncertainty > 0.4:
+        uncertainty_threshold = 0.3
+        if hasattr(self.constitutional_wrapper, 'uncertainty_threshold'):
+            uncertainty_threshold = self.constitutional_wrapper.uncertainty_threshold
+        
+        if uncertainty > uncertainty_threshold:
             flags.append("HIGH_UNCERTAINTY")
             explanation.append(f"High uncertainty ({uncertainty:.3f}). Recommend human review.")
         
@@ -322,6 +330,12 @@ class ModelManager:
         if predicted_class == "CONFIRMED" and confidence < 0.85:
             flags.append("LOW_CONFIDENCE_CONFIRMED")
             explanation.append("CONFIRMED classification requires ≥85% confidence for scientific rigor.")
+        
+        # Check for significant CANDIDATE signal
+        candidate_idx = self.class_names.index("CANDIDATE") if "CANDIDATE" in self.class_names else 0
+        if probabilities[candidate_idx] > 0.3 and prediction_idx != candidate_idx:
+            flags.append("SIGNIFICANT_CANDIDATE_SIGNAL")
+            explanation.append(f"Notable CANDIDATE probability ({probabilities[candidate_idx]:.3f}).")
         
         # Check for unusual input values
         if features.koi_prad and features.koi_prad > 20:
@@ -354,9 +368,9 @@ async def startup_event():
     logger.info("Starting Exoplanet Hunter AI API...")
     success = model_manager.load_models()
     if success:
-        logger.info("✓ All models loaded successfully")
+        logger.info("All models loaded successfully")
     else:
-        logger.warning("⚠ Some models failed to load")
+        logger.warning("Some models failed to load")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -432,7 +446,7 @@ async def model_info():
         "feature_count": len(model_manager.feature_names) if model_manager.feature_names else 12,
         "scaler_loaded": model_manager.scaler is not None,
         "imputer_loaded": model_manager.imputer is not None,
-        "cnn_transformer_loaded": model_manager.cnn_transformer is not None,
+        "cnn_transformer_loaded": model_manager.cnn_transformer_model is not None,
         "constitutional_ai_enabled": model_manager.constitutional_wrapper is not None
     }
 
