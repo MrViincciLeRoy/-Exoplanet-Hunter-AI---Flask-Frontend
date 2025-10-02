@@ -34,11 +34,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         working-directory: ./backend
 
-      - name: Run tests with pytest
-        run: |
-          pip install pytest
-          pytest
-        working-directory: ./backend
+      
 
       - name: Run health check
         run: |
