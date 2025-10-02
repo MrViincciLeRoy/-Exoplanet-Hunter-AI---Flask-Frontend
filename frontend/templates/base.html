@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Exoplanet Hunter AI{% endblock %}</title>
     
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     
-    <!-- Custom Space Theme CSS -->
     <style>
         :root {
             --space-dark: #0a0e27;
@@ -24,7 +20,8 @@
             --star-gold: #fbbf24;
             --planet-cyan: #06b6d4;
             --text-light: #e5e7eb;
-            --text-muted: #9ca3af;
+            /* FIX: Changed --text-muted from #9ca3af to a much lighter gray (#c0c0c0) for better contrast on dark backgrounds. */
+            --text-muted: #c0c0c0;
         }
         
         * {
@@ -277,6 +274,7 @@
         
         /* Text colors */
         .text-muted {
+            /* Now uses the lighter --text-muted from :root */
             color: var(--text-muted) !important;
         }
         
@@ -293,7 +291,6 @@
 </head>
 <body>
     <div class="content-wrapper">
-        <!-- Navigation -->
         <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
@@ -329,12 +326,10 @@
             </div>
         </nav>
 
-        <!-- Main Content -->
         <main>
             {% block content %}{% endblock %}
         </main>
 
-        <!-- Footer -->
         <footer class="mt-5">
             <div class="container">
                 <div class="row">
@@ -373,7 +368,6 @@
         </footer>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     {% block extra_js %}{% endblock %}
