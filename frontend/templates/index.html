@@ -34,34 +34,120 @@
         </button>
     </div>
 
-    <!-- Statistics Cards -->
+    <!-- Why This Exists Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card bg-gradient p-5" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15));">
+                <h2 class="text-center mb-4 text-nebula">
+                    <i class="bi bi-lightbulb"></i> Why Exoplanet Hunter AI Exists
+                </h2>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-graph-up text-star"></i> The Challenge</h5>
+                        <p class="text-muted">
+                            NASA's Kepler mission has collected data on thousands of potential exoplanet candidates, but manually analyzing 
+                            this vast dataset is time-consuming and prone to human error. Traditional methods struggle to accurately 
+                            distinguish between confirmed planets, promising candidates, and false positives.
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-bullseye text-nebula"></i> Our Mission</h5>
+                        <p class="text-muted">
+                            Exoplanet Hunter AI accelerates exoplanet discovery by automating the classification process with advanced 
+                            machine learning. We help astronomers quickly identify the most promising candidates worthy of further study, 
+                            potentially uncovering planets that could harbor life.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Our Solution Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4 text-nebula">
+                <i class="bi bi-gear"></i> Our Advanced Solution
+            </h2>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-cpu fs-1 text-star"></i>
+                    </div>
+                    <h5 class="card-title text-center">CNN-Transformer Hybrid</h5>
+                    <p class="card-text text-muted">
+                        Our hybrid architecture combines convolutional neural networks for local pattern extraction 
+                        with transformer attention mechanisms for capturing long-range dependencies in stellar data, 
+                        achieving superior classification accuracy.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-layers fs-1 text-nebula"></i>
+                    </div>
+                    <h5 class="card-title text-center">Ensemble Learning</h5>
+                    <p class="card-text text-muted">
+                        We combine predictions from multiple models—CNN-Transformer, LightGBM, and XGBoost—using 
+                        a voting classifier to ensure robust and reliable exoplanet detection across diverse scenarios.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-shield-check fs-1 text-star"></i>
+                    </div>
+                    <h5 class="card-title text-center">Constitutional AI</h5>
+                    <p class="card-text text-muted">
+                        Built-in safety checks ensure scientific integrity with uncertainty quantification, explainable 
+                        predictions, and automatic review flagging for ambiguous cases, maintaining high standards of reliability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Performance Section -->
     <div class="row g-4 mb-5">
+        <div class="col-12">
+            <h2 class="text-center mb-4 text-nebula">
+                <i class="bi bi-trophy"></i> Proven Performance
+            </h2>
+        </div>
         <div class="col-md-3">
             <div class="card text-center p-4 glow-purple">
                 <i class="bi bi-bullseye fs-1 text-star mb-3"></i>
-                <h3 class="fw-bold mb-2" id="accuracyStat">99.2%</h3>
+                <h3 class="fw-bold mb-2">83.55%</h3>
                 <p class="text-muted mb-0">Accuracy</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card text-center p-4 glow-cyan">
-                <i class="bi bi-check2-square fs-1 text-nebula mb-3"></i>
-                <h3 class="fw-bold mb-2" id="precisionStat">98.5%</h3>
-                <p class="text-muted mb-0">Precision</p>
+                <i class="bi bi-graph-up fs-1 text-nebula mb-3"></i>
+                <h3 class="fw-bold mb-2">0.8142</h3>
+                <p class="text-muted mb-0">Macro F1-Score</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card text-center p-4 glow-purple">
-                <i class="bi bi-search fs-1 text-star mb-3"></i>
-                <h3 class="fw-bold mb-2" id="recallStat">97.8%</h3>
-                <p class="text-muted mb-0">Recall</p>
+                <i class="bi bi-check2-square fs-1 text-star mb-3"></i>
+                <h3 class="fw-bold mb-2">0.8672</h3>
+                <p class="text-muted mb-0">F1 (Confirmed)</p>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card text-center p-4 glow-cyan">
-                <i class="bi bi-graph-up fs-1 text-nebula mb-3"></i>
-                <h3 class="fw-bold mb-2" id="rocStat">99.6%</h3>
-                <p class="text-muted mb-0">ROC-AUC</p>
+                <i class="bi bi-x-circle fs-1 text-nebula mb-3"></i>
+                <h3 class="fw-bold mb-2">0.8985</h3>
+                <p class="text-muted mb-0">F1 (False Positive)</p>
             </div>
         </div>
     </div>
@@ -72,7 +158,7 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="mb-0">
-                        <i class="bi bi-bar-chart"></i> Model Performance Metrics
+                        <i class="bi bi-bar-chart"></i> Classification Performance by Class
                     </h5>
                 </div>
                 <div class="card-body">
@@ -94,51 +180,61 @@
         </div>
     </div>
 
-    <!-- Features Section -->
-    <div class="row g-4 mb-5">
+    <!-- Key Benefits Section -->
+    <div class="row mb-5">
         <div class="col-12">
             <h2 class="text-center mb-4 text-nebula">
-                <i class="bi bi-stars"></i> Advanced Features
+                <i class="bi bi-stars"></i> Key Benefits
             </h2>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="text-center mb-3">
-                        <i class="bi bi-cpu fs-1 text-star"></i>
-                    </div>
-                    <h5 class="card-title text-center">CNN-Transformer Architecture</h5>
-                    <p class="card-text text-muted">
-                        Hybrid deep learning model combining CNN feature extraction
-                        with transformer attention mechanisms for superior classification.
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-speedometer2 text-star"></i> Accelerated Discovery
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Process thousands of exoplanet candidates in seconds, dramatically reducing the time from 
+                        data collection to discovery and allowing astronomers to focus on the most promising targets.
                     </p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="text-center mb-3">
-                        <i class="bi bi-layers fs-1 text-nebula"></i>
-                    </div>
-                    <h5 class="card-title text-center">Ensemble Learning</h5>
-                    <p class="card-text text-muted">
-                        Combines predictions from CNN-Transformer, LightGBM, and XGBoost
-                        for robust and accurate exoplanet detection.
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-graph-up-arrow text-nebula"></i> Uncertainty Quantification
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Monte Carlo Dropout provides confidence estimates for every prediction, automatically flagging 
+                        uncertain cases for human review and ensuring no potential discoveries are missed.
                     </p>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card h-100">
                 <div class="card-body">
-                    <div class="text-center mb-3">
-                        <i class="bi bi-shield-check fs-1 text-star"></i>
-                    </div>
-                    <h5 class="card-title text-center">Constitutional AI</h5>
-                    <p class="card-text text-muted">
-                        Built-in safety checks for scientific integrity, uncertainty
-                        quantification, and explainable predictions with confidence scores.
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-eye text-star"></i> Interpretable Results
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Feature importance analysis shows which stellar parameters most influence each prediction, 
+                        providing scientific insights and building trust in the AI's decision-making process.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="fw-bold mb-3">
+                        <i class="bi bi-database text-nebula"></i> Comprehensive Training
+                    </h5>
+                    <p class="text-muted mb-0">
+                        Trained on NASA's complete Kepler cumulative dataset with advanced preprocessing techniques 
+                        including SMOTE for class imbalance, ensuring reliable performance across all exoplanet types.
                     </p>
                 </div>
             </div>
@@ -149,7 +245,8 @@
     <div class="card bg-gradient p-5 text-center mb-5" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));">
         <h3 class="fw-bold mb-3">Ready to Discover Exoplanets?</h3>
         <p class="lead text-muted mb-4">
-            Upload your stellar observation data and let our AI system classify potential exoplanet candidates
+            Upload your stellar observation data and let our AI system classify potential exoplanet candidates 
+            with state-of-the-art accuracy and reliability.
         </p>
         <a href="/predict" class="btn btn-primary btn-lg">
             <i class="bi bi-rocket-takeoff"></i> Start Classification
@@ -193,48 +290,26 @@
                 wakeButton.classList.remove('d-none');
             });
     }
-    
-    // Animate statistics on load
-    function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        const range = end - start;
-        const increment = end > start ? 1 : -1;
-        const stepTime = Math.abs(Math.floor(duration / range));
-        let current = start;
-        
-        const timer = setInterval(() => {
-            current += increment * 0.1;
-            obj.textContent = current.toFixed(1) + '%';
-            if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-                obj.textContent = end.toFixed(1) + '%';
-                clearInterval(timer);
-            }
-        }, stepTime);
-    }
 
-    // Performance Chart
+    // Performance Chart - Updated with correct metrics
     function createPerformanceChart() {
         const ctx = document.getElementById('performanceChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score', 'ROC-AUC'],
+                labels: ['CONFIRMED', 'CANDIDATE', 'FALSE POSITIVE'],
                 datasets: [{
-                    label: 'Performance (%)',
-                    data: [99.2, 98.5, 97.8, 98.1, 99.6],
+                    label: 'F1-Score',
+                    data: [0.8672, 0.6771, 0.8985],
                     backgroundColor: [
-                        'rgba(139, 92, 246, 0.8)',
-                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
                         'rgba(251, 191, 36, 0.8)',
-                        'rgba(6, 182, 212, 0.8)',
-                        'rgba(34, 197, 94, 0.8)'
+                        'rgba(239, 68, 68, 0.8)'
                     ],
                     borderColor: [
-                        'rgba(139, 92, 246, 1)',
-                        'rgba(236, 72, 153, 1)',
+                        'rgba(34, 197, 94, 1)',
                         'rgba(251, 191, 36, 1)',
-                        'rgba(6, 182, 212, 1)',
-                        'rgba(34, 197, 94, 1)'
+                        'rgba(239, 68, 68, 1)'
                     ],
                     borderWidth: 2,
                     borderRadius: 8
@@ -254,19 +329,24 @@
                         borderColor: 'rgba(139, 92, 246, 0.5)',
                         borderWidth: 1,
                         padding: 12,
-                        displayColors: false
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return 'F1-Score: ' + context.parsed.y.toFixed(4);
+                            }
+                        }
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 100,
+                        max: 1.0,
                         grid: {
                             color: 'rgba(139, 92, 246, 0.1)'
                         },
                         ticks: {
                             color: '#9ca3af',
-                            callback: value => value + '%'
+                            callback: value => value.toFixed(2)
                         }
                     },
                     x: {
@@ -328,7 +408,12 @@
                         bodyColor: '#e5e7eb',
                         borderColor: 'rgba(139, 92, 246, 0.5)',
                         borderWidth: 1,
-                        padding: 12
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
                     }
                 },
                 animation: {
@@ -342,12 +427,6 @@
 
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', () => {
-        // Animate statistics
-        animateValue('accuracyStat', 0, 99.2, 2000);
-        animateValue('precisionStat', 0, 98.5, 2000);
-        animateValue('recallStat', 0, 97.8, 2000);
-        animateValue('rocStat', 0, 99.6, 2000);
-        
         // Create charts
         createPerformanceChart();
         createDistributionChart();
