@@ -73,6 +73,9 @@ def about():
 @app.route('/research')
 def research():
     return render_template('test_image.html')
+@app.route('/technical-report')
+def technical_report():
+    return render_template('technical_report.html')
 @app.route('/docs')
 def docs():
     """Documentation page with project information"""
