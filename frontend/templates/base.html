@@ -366,7 +366,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="http://localhost:8000/docs" target="_blank">
+                            <a class="nav-link {% if request.path == '/about' %}active{% endif %}" href="/docs" >
                                 <i class="bi bi-file-earmark-code"></i> API Docs
                             </a>
                         </li>
