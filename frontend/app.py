@@ -12,7 +12,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 
 # API Configuration
-API_BASE_URL = os.getenv('API_URL', 'http://localhost:8000')
+API_BASE_URL = os.getenv('API_URL', 'https://exoplanet-hunter-ai-backend.onrender.com')
 
 # ============================================================================
 # ROUTES
