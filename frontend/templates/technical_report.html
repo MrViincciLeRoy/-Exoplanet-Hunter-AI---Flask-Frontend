@@ -81,7 +81,7 @@
                 <li><strong>Gradient Boosting:</strong> LightGBM, XGBoost</li>
                 <li><strong>Data Processing:</strong> Pandas, NumPy, Scikit-learn</li>
                 <li><strong>Ensemble Methods:</strong> Weighted voting, stacking</li>
-                <li><strong>Safety Layer:</strong> Constitutional AI wrapper</li>
+                <li><strong>Safety Layer:</strong> Constitutional AI wrapper with uncertainty quantification</li>
             </ul>
         </div>
     </div>
@@ -207,9 +207,13 @@
             <div class="alert alert-warning mt-3">
                 <strong>Imbalance Ratio:</strong> 2.45:1 - Requires specialized handling through SMOTE and class weighting
             </div>
-            
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/class_distribution.png') }}" alt="Class Distribution" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+
             <h5 class="text-nebula mt-4 mb-3">3.2 Feature Selection</h5>
-            <p>From 153 available features, 12 key astronomical parameters were selected based on scientific relevance and data completeness:</p>
+            <p>From 153 available features, 12 key astronomical parameters were selected based on scientific relevance and data completeness (<30% missing):</p>
             
             <div class="card bg-dark mt-3">
                 <div class="card-body">
@@ -227,6 +231,32 @@
 11. koi_slogg       - Stellar surface gravity (log10)
 12. koi_score       - Disposition score (0-1)</code></pre>
                 </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6 text-center">
+                    <img src="{{ url_for('static', filename='img/missing_values.png') }}" alt="Missing Values" class="img-fluid rounded shadow">
+                    <p class="text-muted mt-2">Missing Values per Feature</p>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="{{ url_for('static', filename='img/koi_score_analysis.png') }}" alt="KOI Score Analysis" class="img-fluid rounded shadow">
+                    <p class="text-muted mt-2">KOI Score Distribution by Class</p>
+                </div>
+            </div>
+
+            <h5 class="text-nebula mt-4 mb-3">3.3 Key Insights</h5>
+            <ul>
+                <li><strong>koi_score</strong> is highly discriminative: CONFIRMED objects have mean score 0.96, while FALSE POSITIVE average just 0.04.</li>
+                <li>A threshold of <code>koi_score > 0.9</code> yields 2,520 CONFIRMED vs only 73 FALSE POSITIVE.</li>
+                <li>High correlation found between <code>koi_smass ↔ koi_steff</code> (r=0.813) and <code>koi_srad ↔ koi_slogg</code> (r=-0.835).</li>
+            </ul>
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/correlation_matrix.png') }}" alt="Feature Correlation Matrix" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/feature_distributions_by_class.png') }}" alt="Feature Distributions by Class" class="img-fluid rounded shadow">
             </div>
         </div>
     </div>
@@ -331,6 +361,10 @@
             <div class="alert alert-success mt-3">
                 <strong>Training Set Expansion:</strong> From 6,909 to 10,488 samples (+51.8%)
             </div>
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/smote_comparison.png') }}" alt="SMOTE Comparison" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
         </div>
     </div>
 
@@ -408,9 +442,21 @@
                     </tbody>
                 </table>
             </div>
-            
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/model_comparison.png') }}" alt="Model Comparison" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+
+            <h5 class="text-nebula mt-4 mb-3">5.3 Hyperparameter Tuning (LightGBM)</h5>
+            <p>Grid search over 81 parameter combinations yielded:</p>
+            <ul>
+                <li><strong>Best Parameters:</strong> <code>learning_rate=0.3, max_depth=7, n_estimators=200, num_leaves=50</code></li>
+                <li><strong>Best CV F1-Score:</strong> 88.67%</li>
+                <li><strong>Test F1-Score:</strong> 80.24%</li>
+            </ul>
+
             <div class="alert alert-success mt-3">
-                <strong>Best Baseline Model:</strong> LightGBM achieved the highest F1-score (80.04%) with excellent training efficiency
+                <strong>Best Baseline Model:</strong> LightGBM achieved the highest F1-score (80.04%) with excellent training efficiency (0.63s)
             </div>
         </div>
     </div>
@@ -427,11 +473,11 @@
             <div class="alert alert-info">
                 <strong>System Components:</strong>
                 <ul class="mb-0">
-                    <li>CNN-Transformer hybrid neural network</li>
+                    <li>CNN-Transformer hybrid neural network (trained for 10 epochs)</li>
                     <li>LightGBM gradient boosting model</li>
                     <li>XGBoost gradient boosting model</li>
-                    <li>Ensemble voting mechanism</li>
-                    <li>Constitutional AI safety wrapper</li>
+                    <li>Weighted ensemble voting</li>
+                    <li>Constitutional AI wrapper with uncertainty quantification</li>
                 </ul>
             </div>
             
@@ -476,6 +522,14 @@
                     </tbody>
                 </table>
             </div>
+
+            <h5 class="text-nebula mt-4 mb-3">6.3 Constitutional AI Layer</h5>
+            <p>Added safety and scientific integrity through:</p>
+            <ul>
+                <li>Uncertainty quantification (e.g., high uncertainty → flag for human review)</li>
+                <li>Explainable predictions with confidence scores</li>
+                <li>Automated flagging of low-confidence predictions</li>
+            </ul>
         </div>
     </div>
 
@@ -514,7 +568,11 @@
                     </div>
                 </div>
             </div>
-            
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/roc_curves.png') }}" alt="ROC Curves" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+
             <h5 class="text-nebula mt-4 mb-3">7.2 Detailed Classification Report</h5>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
@@ -559,7 +617,30 @@
                     </tbody>
                 </table>
             </div>
-            
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/confusion_matrix_test.png') }}" alt="Confusion Matrix" class="img-fluid rounded shadow">
+            </div>
+
+            <h5 class="text-nebula mt-4 mb-3">7.3 Feature Importance</h5>
+            <p>Top 10 most important features (from LightGBM):</p>
+            <ol>
+                <li><strong>koi_duration</strong> – Transit duration (hours)</li>
+                <li><strong>koi_period</strong> – Orbital period (days)</li>
+                <li><strong>koi_model_snr</strong> – Signal-to-noise ratio</li>
+                <li><strong>koi_steff</strong> – Stellar temperature</li>
+                <li><strong>koi_prad</strong> – Planet radius</li>
+                <li><strong>koi_smass</strong> – Stellar mass</li>
+                <li><strong>koi_depth</strong> – Transit depth</li>
+                <li><strong>koi_score</strong> – Disposition score</li>
+                <li><strong>koi_slogg</strong> – Stellar surface gravity</li>
+                <li><strong>koi_teq</strong> – Equilibrium temperature</li>
+            </ol>
+
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/feature_importance.png') }}" alt="Feature Importance" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+
             <div class="alert alert-success mt-3">
                 <strong>Performance Improvement:</strong> The advanced system achieved a +0.56% improvement in F1-score over the original LightGBM baseline, with added benefits of uncertainty quantification and explainability.
             </div>
