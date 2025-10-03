@@ -124,23 +124,6 @@
         border: 2px solid rgba(239, 68, 68, 0.5);
         color: #fca5a5;
     }
-
-    /* Planet database display styling */
-    .planet-database-info {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-    }
-
-    .planet-database-info h6 {
-        color: #86efac;
-    }
-
-    .planet-database-info hr {
-        border-color: rgba(34, 197, 94, 0.3);
-    }
 </style>
 {% endblock %}
 
@@ -448,41 +431,45 @@
 <script>
     let pieChart, barChart, featureChart, radarChart, modelComparisonChart;
 
-    // Generate random planet candidate data
-    function generateRandomPlanetData() {
-        return {
-            koi_period: (Math.random() * 10).toFixed(2),
-            koi_duration: (Math.random() * 5).toFixed(2),
-            koi_depth: (Math.random() * 200).toFixed(2),
-            koi_srad: (Math.random() * 2).toFixed(2),
-            koi_steff: (Math.random() * 6000 + 3000).toFixed(0),
-            koi_impact: (Math.random()).toFixed(2),
-            koi_prad: (Math.random() * 2).toFixed(2),
-            koi_smass: (Math.random() * 2).toFixed(2),
-            koi_slogg: (Math.random() * 5).toFixed(2),
-            koi_insol: (Math.random() * 3).toFixed(2),
-            koi_teq: (Math.random() * 600).toFixed(0),
-            koi_model_snr: (Math.random() * 30).toFixed(0)
-        };
-    }
+    // Example data
+    // Function to generate random planet candidate data
+function generateRandomPlanetData() {
+    return {
+        koi_period: (Math.random() * 10).toFixed(2),  // Random period between 0 and 10
+        koi_duration: (Math.random() * 5).toFixed(2), // Random duration between 0 and 5
+        koi_depth: (Math.random() * 200).toFixed(2),   // Random depth between 0 and 200
+        koi_srad: (Math.random() * 2).toFixed(2),      // Random star radius between 0 and 2
+        koi_steff: (Math.random() * 6000 + 3000).toFixed(0), // Random effective temperature between 3000 and 9000
+        koi_impact: (Math.random()).toFixed(2),        // Random impact parameter between 0 and 1
+        koi_prad: (Math.random() * 2).toFixed(2),      // Random planet radius between 0 and 2
+        koi_smass: (Math.random() * 2).toFixed(2),     // Random star mass between 0 and 2
+        koi_slogg: (Math.random() * 5).toFixed(2),     // Random surface gravity
+        koi_insol: (Math.random() * 3).toFixed(2),     // Random insolation
+        koi_teq: (Math.random() * 600).toFixed(0),      // Random equilibrium temperature
+        koi_model_snr: (Math.random() * 30).toFixed(0)  // Random signal-to-noise ratio
+    };
+}
 
-    // Generate array of random planet candidates
-    const randomPlanetCandidates = Array.from({ length: 20 }, generateRandomPlanetData);
+// Generate an array of random planet candidates
+const randomPlanetCandidates = Array.from({ length: 20 }, generateRandomPlanetData);
 
-    // Load example data into input fields
-    document.getElementById('exampleBtn').addEventListener('click', () => {
-        const candidateIndex = Math.floor(Math.random() * randomPlanetCandidates.length);
-        const exampleData = randomPlanetCandidates[candidateIndex];
+// Example usage: Log the random planet candidates to the console
+console.log(randomPlanetCandidates);
 
-        Object.keys(exampleData).forEach(key => {
-            const input = document.getElementById(key);
-            if (input) input.value = exampleData[key];
-        });
-        
-        const advancedCollapse = new bootstrap.Collapse(document.getElementById('advancedFeatures'), {
-            show: true
-        });
+// Load example data into input fields
+document.getElementById('exampleBtn').addEventListener('click', () => {
+    const candidateIndex = Math.floor(Math.random() * randomPlanetCandidates.length);
+    const exampleData = randomPlanetCandidates[candidateIndex];
+
+    Object.keys(exampleData).forEach(key => {
+        const input = document.getElementById(key);
+        if (input) input.value = exampleData[key];
     });
+    
+    const advancedCollapse = new bootstrap.Collapse(document.getElementById('advancedFeatures'), {
+        show: true
+    });
+});
 const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
     
     // Wake API function
@@ -570,7 +557,7 @@ const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
             const result = await response.json();
             
             if (response.ok) {
-                await displayResults(result);
+                displayResults(result);
             } else {
                 showError(result.error || 'Prediction failed');
             }
@@ -579,7 +566,7 @@ const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
         }
     });
 
-    async function displayResults(result) {
+    function displayResults(result) {
         document.getElementById('loadingCard').style.display = 'none';
         document.getElementById('resultsSection').style.display = 'block';
         
@@ -617,25 +604,11 @@ const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
         createRadarChart();
         createModelComparisonChart(probs);
         
-        // Update interpretation with database info for confirmed planets
-        let interpretationHTML = `
+        // Update interpretation
+        document.getElementById('interpretation').innerHTML = `
             <strong><i class="bi bi-info-circle"></i> Interpretation:</strong><br>
             ${getInterpretation(prediction, confidence)}
         `;
-        
-        // If confirmed, try to fetch matching planet data from database
-        if (prediction === 'CONFIRMED') {
-            try {
-                const planetData = await fetchMatchingPlanet();
-                if (planetData) {
-                    interpretationHTML += formatPlanetData(planetData);
-                }
-            } catch (error) {
-                console.error('Error fetching planet data:', error);
-            }
-        }
-        
-        document.getElementById('interpretation').innerHTML = interpretationHTML;
         
         // AI Flags
         if (result.flags && result.flags.length > 0) {
@@ -648,137 +621,6 @@ const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
         } else {
             document.getElementById('aiFlags').style.display = 'none';
         }
-    }
-
-    // Fetch matching planet from database
-    async function fetchMatchingPlanet() {
-        try {
-            const response = await fetch('/static/json/confirmed_planets.json');
-            if (!response.ok) {
-                throw new Error('Failed to load planet database');
-            }
-            const planets = await response.json();
-            
-            // Get input values for matching
-            const inputPeriod = parseFloat(document.getElementById('koi_period').value);
-            const inputDepth = parseFloat(document.getElementById('koi_depth').value);
-            const inputDuration = parseFloat(document.getElementById('koi_duration').value);
-            
-            // Find best match based on orbital period (primary matching criterion)
-            let bestMatch = null;
-            let minDifference = Infinity;
-            
-            planets.forEach(planet => {
-                if (planet.pl_orbper && !isNaN(planet.pl_orbper)) {
-                    const difference = Math.abs(planet.pl_orbper - inputPeriod);
-                    const percentDiff = (difference / inputPeriod) * 100;
-                    
-                    // Match if within 10% of orbital period
-                    if (percentDiff < 10 && difference < minDifference) {
-                        minDifference = difference;
-                        bestMatch = planet;
-                    }
-                }
-            });
-            
-            return bestMatch;
-        } catch (error) {
-            console.error('Error loading planet database:', error);
-            return null;
-        }
-    }
-
-    // Format planet data for display
-    function formatPlanetData(planet) {
-        let html = '<div class="planet-database-info mt-4">';
-        html += '<h6 class="mb-3"><i class="bi bi-database"></i> Matching Confirmed Exoplanet Found</h6>';
-        
-        if (planet.pl_name) {
-            html += `<p><strong>Planet Name:</strong> ${planet.pl_name}</p>`;
-        }
-        
-        if (planet.hostname) {
-            html += `<p><strong>Host Star:</strong> ${planet.hostname}</p>`;
-        }
-        
-        if (planet.discoverymethod) {
-            html += `<p><strong>Discovery Method:</strong> ${planet.discoverymethod}</p>`;
-        }
-        
-        if (planet.disc_year) {
-            html += `<p><strong>Discovery Year:</strong> ${planet.disc_year}</p>`;
-        }
-        
-        if (planet.disc_facility) {
-            html += `<p><strong>Discovery Facility:</strong> ${planet.disc_facility}</p>`;
-        }
-        
-        // Orbital parameters
-        html += '<hr><h6 class="text-info mt-3 mb-2"><i class="bi bi-arrow-repeat"></i> Orbital Parameters</h6>';
-        
-        if (planet.pl_orbper && !isNaN(planet.pl_orbper)) {
-            html += `<p class="mb-1"><strong>Orbital Period:</strong> ${planet.pl_orbper.toFixed(4)} days</p>`;
-        }
-        
-        if (planet.pl_orbsmax && !isNaN(planet.pl_orbsmax)) {
-            html += `<p class="mb-1"><strong>Semi-Major Axis:</strong> ${planet.pl_orbsmax.toFixed(4)} AU</p>`;
-        }
-        
-        if (planet.pl_orbeccen && !isNaN(planet.pl_orbeccen)) {
-            html += `<p class="mb-1"><strong>Eccentricity:</strong> ${planet.pl_orbeccen.toFixed(4)}</p>`;
-        }
-        
-        if (planet.pl_orbincl && !isNaN(planet.pl_orbincl)) {
-            html += `<p class="mb-1"><strong>Inclination:</strong> ${planet.pl_orbincl.toFixed(2)}°</p>`;
-        }
-        
-        // Planet properties
-        html += '<hr><h6 class="text-warning mt-3 mb-2"><i class="bi bi-globe2"></i> Planet Properties</h6>';
-        
-        if (planet.pl_rade && !isNaN(planet.pl_rade)) {
-            html += `<p class="mb-1"><strong>Radius:</strong> ${planet.pl_rade.toFixed(3)} Earth radii</p>`;
-        }
-        
-        if (planet.pl_masse && !isNaN(planet.pl_masse)) {
-            html += `<p class="mb-1"><strong>Mass:</strong> ${planet.pl_masse.toFixed(3)} Earth masses</p>`;
-        }
-        
-        if (planet.pl_dens && !isNaN(planet.pl_dens)) {
-            html += `<p class="mb-1"><strong>Density:</strong> ${planet.pl_dens.toFixed(2)} g/cm³</p>`;
-        }
-        
-        if (planet.pl_eqt && !isNaN(planet.pl_eqt)) {
-            html += `<p class="mb-1"><strong>Equilibrium Temperature:</strong> ${planet.pl_eqt.toFixed(0)} K</p>`;
-        }
-        
-        // Stellar properties
-        html += '<hr><h6 class="text-primary mt-3 mb-2"><i class="bi bi-star"></i> Host Star Properties</h6>';
-        
-        if (planet.st_teff && !isNaN(planet.st_teff)) {
-            html += `<p class="mb-1"><strong>Stellar Temperature:</strong> ${planet.st_teff.toFixed(0)} K</p>`;
-        }
-        
-        if (planet.st_rad && !isNaN(planet.st_rad)) {
-            html += `<p class="mb-1"><strong>Stellar Radius:</strong> ${planet.st_rad.toFixed(3)} solar radii</p>`;
-        }
-        
-        if (planet.st_mass && !isNaN(planet.st_mass)) {
-            html += `<p class="mb-1"><strong>Stellar Mass:</strong> ${planet.st_mass.toFixed(3)} solar masses</p>`;
-        }
-        
-        if (planet.sy_dist && !isNaN(planet.sy_dist)) {
-            const lightYears = (planet.sy_dist * 3.26156).toFixed(2);
-            html += `<p class="mb-1"><strong>Distance from Earth:</strong> ${planet.sy_dist.toFixed(2)} parsecs (${lightYears} light-years)</p>`;
-        }
-        
-        if (planet.ra && planet.dec) {
-            html += '<hr><h6 class="mt-3 mb-2"><i class="bi bi-geo-alt"></i> Sky Coordinates</h6>';
-            html += `<p class="mb-1"><strong>Right Ascension:</strong> ${planet.ra.toFixed(4)}°</p>`;
-            html += `<p class="mb-1"><strong>Declination:</strong> ${planet.dec.toFixed(4)}°</p>`;
-        }
-        
-        html += '</div>';
-        return html;
     }
 
     function createPieChart(probabilities) {
