@@ -1,0 +1,991 @@
+NASA EXOPLANET ARCHIVE DATA SCRAPER
+ Using TAP (Table Access Protocol) Service
+======================================================================
+
+/tmp/ipython-input-2753593892.py:145: DtypeWarning: Columns (72) have mixed types. Specify dtype option on import or set low_memory=False.
+  df = pd.read_csv(StringIO(response.text))
+
+======================================================================
+ DATA COLLECTION COMPLETE!
+======================================================================
+
+Total datasets downloaded: 4
+Data saved to: /content/data/raw
+
+Files created:
+  - tess_toi.csv
+  - kepler_cumulative.csv
+  - k2_candidates.csv
+  - confirmed_planets.csv
+  - dataset_summary.json
+  - dataset_summary.md
+DATASET SUMMARY
+================================================================================
+
+KEPLER CUMULATIVE
+--------------------------------------------------------------------------------
+Records: 9,564
+Columns: 153
+
+Class Distribution (koi_disposition):
+  FALSE POSITIVE           :  4,839 (50.60%)
+  CONFIRMED                :  2,746 (28.71%)
+  CANDIDATE                :  1,979 (20.69%)
+
+K2 CANDIDATES
+--------------------------------------------------------------------------------
+Records: 4,004
+Columns: 361
+
+TESS TOI
+--------------------------------------------------------------------------------
+Records: 7,699
+Columns: 91
+
+Class Distribution (tfopwg_disp):
+  PC                       :  4,678 (60.76%)
+  FP                       :  1,196 (15.53%)
+  CP                       :    683 ( 8.87%)
+  KP                       :    583 ( 7.57%)
+  APC                      :    461 ( 5.99%)
+  FA                       :     98 ( 1.27%)
+
+CONFIRMED PLANETS
+--------------------------------------------------------------------------------
+Records: 6,013
+Columns: 354
+Kepler Cumulative Dataset: 9,564 objects
+Columns: 153
+
+Shape: (9564, 153)
+Memory usage: 22.12 MB
+
+First 5 rows:
+Data Types:
+float64    127
+object      20
+int64        6
+Name: count, dtype: int64
+
+Numerical columns: 133
+Object columns: 20
+CLASS DISTRIBUTION:
+================================================================================
+koi_disposition
+FALSE POSITIVE    4839
+CONFIRMED         2746
+CANDIDATE         1979
+CLASS IMBALANCE RATIO: 2.45:1
+    This will require special handling (SMOTE, class weights, etc.)
+Available key features: 12/12
+[Image : class_distribution.png] 
+Features found:
+ 1. koi_period
+ 2. koi_depth
+ 3. koi_duration
+ 4. koi_prad
+ 5. koi_teq
+ 6. koi_insol
+ 7. koi_model_snr
+ 8. koi_steff
+ 9. koi_srad
+10. koi_smass
+11. koi_slogg
+12. koi_score
+
+MISSING VALUES ANALYSIS:
+================================================================================
+      Feature  Missing  Missing %
+    koi_score     1510  15.788373
+    koi_depth      363   3.795483
+      koi_teq      363   3.795483
+     koi_prad      363   3.795483
+    koi_smass      363   3.795483
+     koi_srad      363   3.795483
+    koi_steff      363   3.795483
+koi_model_snr      363   3.795483
+    koi_slogg      363   3.795483
+    koi_insol      321   3.356336
+ koi_duration        0   0.000000
+   koi_period        0   0.000000
+[Image :missing_values.png] 
+Features with <30% missing values: 12
+  These will be prioritized for the ML model
+
+Selected features:
+  • koi_score
+  • koi_depth
+  • koi_teq
+  • koi_prad
+  • koi_smass
+  • koi_srad
+  • koi_steff
+  • koi_model_snr
+  • koi_slogg
+  • koi_insol
+  • koi_duration
+  • koi_period
+FEATURE STATISTICS BY CLASS:
+================================================================================
+
+KOI_SCORE:
+--------------------------------------------------------------------------------
+                 count    mean  median     std  min  max
+koi_disposition                                         
+CANDIDATE         1379  0.7983   0.965  0.3107  0.0  1.0
+CONFIRMED         2729  0.9606   1.000  0.1468  0.0  1.0
+FALSE POSITIVE    3946  0.0381   0.000  0.1588  0.0  1.0
+
+KOI_DEPTH:
+--------------------------------------------------------------------------------
+                 count        mean  median          std   min        max
+koi_disposition                                                         
+CANDIDATE         1875   1370.7510  242.30    9195.0596   0.0   348130.0
+CONFIRMED         2744   1051.8190  448.80    2491.4018  12.2    36911.9
+FALSE POSITIVE    4582  46583.9822  575.95  111850.0043   0.8  1541400.0
+
+KOI_TEQ:
+--------------------------------------------------------------------------------
+                 count       mean  median        std    min      max
+koi_disposition                                                     
+CANDIDATE         1875   816.0997   692.0   581.8904   25.0   6285.0
+CONFIRMED         2744   831.5124   777.0   377.8882  129.0   3559.0
+FALSE POSITIVE    4582  1347.6163  1152.5  1054.3589   92.0  14667.0
+
+KOI_PRAD:
+koi_disposition                                                     
+CANDIDATE         1875   97.8999   1.740  2638.4017  0.22  109061.00
+CONFIRMED         2744    2.8574   2.155     3.4010  0.27      77.76
+FALSE POSITIVE    4582  164.8416   8.97
+KOI_SMASS:
+--------------------------------------------------------------------------------
+                 count    mean  median     std    min    max
+koi_disposition                                             
+CANDIDATE         1875  1.0254   0.980  0.3342  0.101  3.601
+CONFIRMED         2744  0.9357   0.941  0.2221  0.096  3.573
+FALSE POSITIVE    4582  1.0757   0.995  0.4033  0.000  3.735
+[Image :feature_distributions_by_class.png] 
+KOI SCORE ANALYSIS:
+================================================================================
+                  count      mean       std  min     25%    50%    75%  max
+koi_disposition                                                            
+CANDIDATE        1379.0  0.798315  0.310657  0.0  0.7585  0.965  0.998  1.0
+CONFIRMED        2729.0  0.960558  0.146797  0.0  0.9920  1.000  1.000  1.0
+FALSE POSITIVE   3946.0  0.038105  0.158799  0.0  0.0000  0.000  0.000  1.0
+[Image :koi_score_analysis.png] 
+SCORE THRESHOLD ANALYSIS:
+
+Score > 0.5:
+koi_disposition
+CONFIRMED         2655
+CANDIDATE         1147
+FALSE POSITIVE     116
+Name: count, dtype: int64
+
+Score > 0.7:
+koi_disposition
+CONFIRMED         2632
+CANDIDATE         1065
+FALSE POSITIVE      93
+Name: count, dtype: int64
+
+Score > 0.9:
+koi_disposition
+CONFIRMED         2520
+CANDIDATE          861
+FALSE POSITIVE      73
+Name: count, dtype: int64
+[Image :correlation_matrix.png] 
+HIGHLY CORRELATED FEATURE PAIRS (|r| > 0.8):
+================================================================================
+koi_smass            <-> koi_steff           :  0.813
+koi_srad             <-> koi_slogg           : -0.835
+[Image :period_radius_plot.png] 
+SIGNAL-TO-NOISE RATIO ANALYSIS:
+================================================================================
+                  count        mean          std  min     25%    50%      75%  \
+koi_disposition                                                                 
+CANDIDATE        1875.0   30.546080    92.236362  0.0   8.800  11.00   15.200   
+CONFIRMED        2744.0   78.595882   261.191872  5.9  18.875  28.60   51.025   
+FALSE POSITIVE   4582.0  462.320581  1070.204147  0.0  12.600  34.25  294.250   
+
+                    max  
+koi_disposition          
+CANDIDATE        1441.9  
+CONFIRMED        5945.9  
+FALSE POSITIVE   9054.7 
+[Image :snr_analysis.png] 
+DATA QUALITY SUMMARY FOR ML MODEL
+================================================================================
+
+1. DATASET SIZE:
+   Total objects: 9,564
+   Training-ready objects (with key features): 7,995
+
+2. CLASS DISTRIBUTION:
+   FALSE POSITIVE      : 4,839 (50.60%)
+   CONFIRMED           : 2,746 (28.71%)
+   CANDIDATE           : 1,979 (20.69%)
+   Imbalance ratio: 2.45:1  ⚠️ Needs handling
+
+3. FEATURES:
+   Available key features: 12
+   Low-missing features (<30%): 12
+   Recommended for initial model: 12
+
+4. MISSING DATA STRATEGY:
+   • Drop rows with missing target (koi_disposition): Priority
+   • Impute missing features: Mean/Median for numerical
+   • Feature selection: Start with low-missing features
+   • Advanced: Multiple imputation or feature engineering
+
+5. CLASS IMBALANCE STRATEGY:
+   • SMOTE (Synthetic Minority Over-sampling)
+   • Class weights in model training
+   • Ensemble methods (XGBoost with scale_pos_weight)
+   • Stratified cross-validation
+✓ Analysis summary saved to: reports/eda_summary.json
+✓ Feature configuration saved to: data/processed/feature_config.json
+
+================================================================================
+✅ EXPLORATORY DATA ANALYSIS COMPLETE!
+================================================================================
+
+📊 Key Findings:
+   • Dataset: 9,564 exoplanet candidates
+   • Classes: 3 (CONFIRMED, CANDIDATE, FALSE POSITIVE)
+   • Features: 12 selected for ML model
+   • Class imbalance: 2.4:1 (requires handling)
+
+🔄 Next Phase: DATA PREPROCESSING
+   Tasks:
+   1. Handle missing values (imputation)
+   2. Feature scaling/normalization
+   3. Address class imbalance (SMOTE)
+   4. Train-validation-test split (stratified)
+   5. Feature engineering (if needed)
+✓ Imports complete!
+✓ Directories created!
+📊 Loaded dataset: 9,564 rows × 153 columns
+
+✓ Target column: koi_disposition
+✓ Feature columns: 12
+
+Selected features:
+   1. koi_score
+   2. koi_depth
+   3. koi_teq
+   4. koi_prad
+   5. koi_smass
+   6. koi_srad
+   7. koi_steff
+   8. koi_model_snr
+   9. koi_slogg
+  10. koi_insol
+  11. koi_duration
+  12. koi_period
+
+================================================================================
+INITIAL DATA CLEANING
+================================================================================
+
+1. Duplicate rows: 0
+
+2. Missing target values: 0
+
+3. Rows with all features missing: 0
+
+📊 Summary:
+   Initial rows:  9,564
+   Final rows:    9,564
+   Removed:       0 (0.00%)
+
+================================================================================
+CLASS DISTRIBUTION AFTER CLEANING
+================================================================================
+
+koi_disposition
+FALSE POSITIVE    4839
+CONFIRMED         2746
+CANDIDATE         1979
+Name: count, dtype: int64
+
+Proportions:
+  FALSE POSITIVE      : 4,839 (50.60%)
+  CONFIRMED           : 2,746 (28.71%)
+  CANDIDATE           : 1,979 (20.69%)
+
+⚠️  Imbalance ratio: 2.45:1
+
+================================================================================
+FEATURE EXTRACTION
+================================================================================
+
+Feature matrix: (9564, 12)
+Target vector:  (9564,)
+
+📊 Missing values per feature:
+Feature                      Missing   Percentage
+--------------------------------------------------
+koi_score                      1,510       15.79%
+koi_depth                        363        3.80%
+koi_teq                          363        3.80%
+koi_prad                         363        3.80%
+koi_smass                        363        3.80%
+koi_srad                         363        3.80%
+koi_steff                        363        3.80%
+koi_model_snr                    363        3.80%
+koi_slogg                        363        3.80%
+koi_insol                        321        3.36%
+koi_duration                       0        0.00%
+koi_period                         0        0.00%
+
+TOTAL                          4,735
+
+================================================================================
+HANDLING MISSING VALUES
+================================================================================
+
+Total missing values before: 4,735
+Total missing values after:  0
+
+✓ Imputed 4,735 missing values using median strategy
+✓ Imputer saved to models/imputer.pkl
+
+================================================================================
+ENCODING TARGET VARIABLE
+================================================================================
+
+Label mapping:
+  CANDIDATE            → 0  (n=1,979)
+  CONFIRMED            → 1  (n=2,746)
+  FALSE POSITIVE       → 2  (n=4,839)
+
+✓ Label encoder saved to models/label_encoder.pkl
+
+================================================================================
+TRAIN-VALIDATION-TEST SPLIT
+================================================================================
+
+Split sizes:
+  Training:   6,909 samples (72.24%)
+  Validation: 1,220 samples (12.76%)
+  Test:       1,435 samples (15.00%)
+
+📊 Class distribution verification:
+Split        CANDIDATE           CONFIRMED           FALSE POSITIVE      
+----------------------------------------------------------------------
+Train         1,429 (20.68%)      1,984 (28.72%)      3,496 (50.60%)     
+Validation      253 (20.74%)        350 (28.69%)        617 (50.57%)     
+Test            297 (20.70%)        412 (28.71%)        726 (50.59%)     
+
+✓ Stratification preserved across all splits!
+
+================================================================================
+FEATURE SCALING
+================================================================================
+
+Scaling statistics (from training set):
+Feature                           Mean      Std Dev
+--------------------------------------------------
+koi_score                       0.4581       0.4411
+koi_depth                   21587.2328   75660.5920
+koi_teq                      1076.5057     844.4042
+koi_prad                       97.4680    2947.3542
+koi_smass                       1.0206       0.3376
+... (showing first 5 features)
+
+✓ Scaler saved to models/scaler.pkl
+
+================================================================================
+HANDLING CLASS IMBALANCE - SMOTE
+================================================================================
+
+Class distribution BEFORE SMOTE:
+  CANDIDATE           : 1,429
+  CONFIRMED           : 1,984
+  FALSE POSITIVE      : 3,496
+
+Class distribution AFTER SMOTE:
+  CANDIDATE           : 3,496
+  CONFIRMED           : 3,496
+  FALSE POSITIVE      : 3,496
+
+✓ Training set expanded from 6,909 to 10,488 samples
+[Image :smote_comparison.png] 
+✓ Visualization saved to reports/figures/smote_comparison.png
+
+================================================================================
+SAVING PREPROCESSED DATA
+====
+✓ Imports complete!
+================================================================================
+LOADING PREPROCESSED DATA
+================================================================================
+
+✓ Training set:   (10488, 12)
+✓ Validation set: (1220, 12)
+✓ Test set:       (1435, 12)
+
+Class distribution in training:
+  CANDIDATE           : 3,496
+  CONFIRMED           : 3,496
+  FALSE POSITIVE      : 3,496
+
+================================================================================
+TRAINING BASELINE MODELS
+================================================================================
+
+
+================================================================================
+Training: Logistic Regression
+================================================================================
+✓ Training completed in 0.19 seconds
+
+================================================================================
+Logistic Regression (Validation) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.7705
+  Precision: 0.7221
+  Recall:    0.7391
+  F1-Score:  0.7266
+  ROC-AUC:   0.9107
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.4924     0.5138     0.5029
+CONFIRMED                0.7488     0.9029     0.8187
+FALSE POSITIVE           0.9251     0.8006     0.8584
+
+Confusion Matrix:
+[[130  94  29]
+ [ 23 316  11]
+ [111  12 494]]
+
+================================================================================
+Training: Random Forest
+================================================================================
+✓ Training completed in 3.88 seconds
+
+================================================================================
+Random Forest (Validation) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.8049
+  Precision: 0.7693
+  Recall:    0.7749
+  F1-Score:  0.7712
+  ROC-AUC:   0.9410
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.5559     0.6285     0.5900
+CONFIRMED                0.8567     0.8371     0.8468
+FALSE POSITIVE           0.8953     0.8590     0.8768
+
+Confusion Matrix:
+[[159  43  51]
+ [ 46 293  11]
+ [ 81   6 530]]
+
+================================================================================
+Training: Gradient Boosting
+================================================================================
+✓ Training completed in 16.11 seconds
+
+================================================================================
+Gradient Boosting (Validation) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.8090
+  Precision: 0.7792
+  Recall:    0.7932
+  F1-Score:  0.7826
+  ROC-AUC:   0.9462
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.5580     0.7036     0.6224
+CONFIRMED                0.8551     0.8429     0.8489
+FALSE POSITIVE           0.9245     0.8331     0.8764
+
+Confusion Matrix:
+[[178  44  31]
+ [ 44 295  11]
+ [ 97   6 514]]
+
+================================================================================
+Training: XGBoost
+================================================================================
+✓ Training completed in 1.21 seconds
+
+================================================================================
+XGBoost (Validation) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.8139
+  Precision: 0.7752
+  Recall:    0.7821
+  F1-Score:  0.7782
+  ROC-AUC:   0.9424
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.5688     0.6206     0.5936
+CONFIRMED                0.8499     0.8571     0.8535
+FALSE POSITIVE           0.9069     0.8687     0.8874
+
+Confusion Matrix:
+[[157  50  46]
+ [ 41 300   9]
+ [ 78   3 536]]
+
+================================================================================
+Training: LightGBM
+================================================================================
+✓ Training completed in 0.63 seconds
+
+================================================================================
+LightGBM (Validation) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.8279
+  Precision: 0.7967
+  Recall:    0.8076
+  F1-Score:  0.8004
+  ROC-AUC:   0.9468
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.6007     0.7075     0.6497
+CONFIRMED      0.8688     0.8514     0.8600
+FALSE POSITIVE           0.9206     0.8639     0.8913
+
+Confusion Matrix:
+[[179  39  35]
+ [ 41 298  11]
+ [ 78   6 533]]
+
+================================================================================
+MODEL COMPARISON (Validation Set)
+================================================================================
+
+              Model  Accuracy  Precision   Recall  F1-Score  ROC-AUC  Train Time
+           LightGBM  0.827869   0.796676 0.807599  0.800354 0.946807    0.628451
+  Gradient Boosting  0.809016   0.779176 0.793159  0.782561 0.946152   16.108437
+            XGBoost  0.813934   0.775212 0.782139  0.778158 0.942377    1.209368
+      Random Forest  0.804918   0.769313 0.774865  0.771187 0.941043    3.883860
+Logistic Regression  0.770492   0.722111 0.739113  0.726646 0.910740    0.185861
+[Image :model_comparison.png] 
+
+Best Model: LightGBM
+   F1-Score: 0.8004
+
+================================================================================
+HYPERPARAMETER TUNING: LightGBM
+================================================================================
+
+Parameter grid:
+  n_estimators: [100, 200, 300]
+  max_depth: [3, 5, 7]
+  learning_rate: [0.01, 0.1, 0.3]
+  num_leaves: [31, 50, 70]
+
+⏳ Running Grid Search (this may take several minutes)...
+Fitting 3 folds for each of 81 candidates, totalling 243 fits
+
+✓ Grid search completed in 201.98 seconds
+
+Best parameters:
+  learning_rate: 0.3
+  max_depth: 7
+  n_estimators: 200
+  num_leaves: 50
+
+Best cross-validation F1-score: 0.8867
+
+================================================================================
+LightGBM (Tuned) - EVALUATION RESULTS
+================================================================================
+
+Overall Metrics:
+  Accuracy:  0.8221
+  Precision: 0.7828
+  Recall:    0.7880
+  F1-Score:  0.7852
+  ROC-AUC:   0.9420
+
+Per-Class Metrics:
+Class                 Precision     Recall   F1-Score
+-------------------------------------------------------
+CANDIDATE                0.6123     0.6700     0.6399
+CONFIRMED                0.8816     0.8495     0.8653
+FALSE POSITIVE           0.9102     0.8939     0.9020
+
+Confusion Matrix:
+[[199  38  60]
+ [ 58 350   4]
+ [ 68   9 649]]
+
+📊 Validation vs Test Performance:
+Metric            Validation         Test   Difference
+-------------------------------------------------------
+Accuracy              0.8221       0.8348      +0.0127
+Precision             0.7828       0.8014      +0.0185
+Recall                0.7880       0.8045      +0.0165
+F1                    0.7852       0.8024    +0.0172
+[Image :roc_curves.png] [Image :confusion_matrix_test.png] [Image :confusion_matrix_normalized.png] 
+FEATURE IMPORTANCE ANALYSIS
+================================================================================
+
+Top 10 Most Important Features:
+      Feature  Importance
+ koi_duration        3897
+   koi_period        3235
+koi_model_snr        2860
+    koi_steff        2752
+     koi_prad        2313
+    koi_smass        2113
+    koi_depth        2081
+    koi_score        1982
+    koi_slogg        1688
+      koi_teq        1567
+Feature importance saved to reports/feature_importance.csv
+[Image :feature_importance.png] 
+================================================================================
+DETAILED CLASSIFICATION REPORT (Test Set)
+================================================================================
+
+                precision    recall  f1-score   support
+
+     CANDIDATE     0.6123    0.6700    0.6399       297
+     CONFIRMED     0.8816    0.8495    0.8653       412
+FALSE POSITIVE     0.9102    0.8939    0.9020       726
+
+      accuracy                         0.8348      1435
+     macro avg     0.8014    0.8045    0.8024      1435
+  weighted avg     0.8404    0.8348    0.8372      1435
+
+✓ Classification report saved to reports/classification_report.txt
+
+================================================================================
+SAVING FINAL MODEL AND RESULTS
+================================================================================
+
+✓ Model saved to models/final_model.pkl
+✓ Model metadata saved to models/model_metadata.json
+✓ Model comparison saved to reports/model_comparison.csv
+
+================================================================================
+TESTING PREDICTION FUNCTION
+================================================================================
+
+Sample prediction:
+  True label:      FALSE POSITIVE
+  Predicted:       FALSE POSITIVE
+  Confidence:      0.9998
+
+  Class probabilities:
+    CANDIDATE           : 0.0000
+    CONFIRMED           : 0.0002
+    FALSE POSITIVE      : 0.9998
+
+✓ Prediction function saved to models/predict.py
+
+================================================================================
+✅ MODEL TRAINING COMPLETE!
+================================================================================
+
+📊 Final Model Performance (Test Set):
+   Model:     LightGBM
+   Accuracy:  0.8348
+Precision: 0.8014
+   Recall:    0.8045
+   F1-Score:  0.8024
+   ROC-AUC:   0.9517
+
+📁 Saved Artifacts:
+   • Final model (models/final_model.pkl)
+   • Model metadata (models/model_metadata.json)
+   • Feature importance (reports/feature_importance.csv)
+   • Classification report (reports/classification_report.txt)
+   • Visualizations (reports/figures/)
+   • Prediction function (models/predict.py)
+
+🎯 Performance Assessment:
+   ⚠️  Below target. Consider:
+      • More feature engineering
+      • Different model architectures
+      • Additional hyperparameter tuning
+
+🚀 Next Phase: WEB APPLICATION DEVELOPMENT
+   • Create FastAPI backend
+   • Build React frontend
+   • Deploy model as web service
+
+================================================================================
+
+✓ API summary saved to models/api_summary.json
+
+You can now use this 
+  IMPROVED EXOPLANET CLASSIFICATION PIPELINE
+================================================================================
+
+1. Loading data...
+
+2. Creating advanced features...
+   Original features: 12
+   Enhanced features: 20
+
+3. Training stacked ensemble...
+Training stacked ensemble...
+
+4. Evaluating on validation set...
+   Validation F1: 0.7817
+
+5. Evaluating on test set...
+   Test F1: 0.7984
+
+6. Saving improved model...
+
+================================================================================
+✅ IMPROVEMENT COMPLETE!
+   Original F1:  0.8024
+   Improved F1:  0.7984
+   Gain:         -0.0040
+========================
+================================================================================
+LOADING DATA FROM EXISTING PIPELINE
+================================================================================
+✓ Training set:   (10488, 12)
+✓ Validation set: (1220, 12)
+✓ Test set:       (1435, 12)
+
+Building CNN-Transformer model...
+Building ensemble models...
+✓ Models built successfully!
+
+================================================================================
+TRAINING ADVANCED EXOPLANET DETECTION SYSTEM
+================================================================================
+
+1. Training CNN-Transformer (this may take 5-10 minutes)...
+Epoch 1/250
+164/164 ━━━━━━━━━━━━━━━━━━━━ 0s 52ms/step - accuracy: 0.5581 - loss: 0.8833
+Epoch 1: val_loss improved from inf to 0.89144, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.3852
+164/164 ━━━━━━━━━━━━━━━━━━━━ 29s 83ms/step - accuracy: 0.5586 - loss: 0.8825 - val_accuracy: 0.4533 - val_loss: 0.8914 - learning_rate: 1.0000e-04 - val_f1_score: 0.3852
+Epoch 2/250
+159/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7215 - loss: 0.5921
+Epoch 2: val_loss improved from 0.89144 to 0.75022, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.6010
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 8ms/step - accuracy: 0.7214 - loss: 0.5923 - val_accuracy: 0.6115 - val_loss: 0.7502 - learning_rate: 1.0000e-04 - val_f1_score: 0.6010
+Epoch 3/250
+163/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7395 - loss: 0.5727
+Epoch 3: val_loss improved from 0.75022 to 0.53514, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.7304
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 8ms/step - accuracy: 0.7394 - loss: 0.5727 - val_accuracy: 0.7664 - val_loss: 0.5351 - learning_rate: 1.0000e-04 - val_f1_score: 0.7304
+Epoch 4/250
+159/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7368 - loss: 0.5660
+Epoch 4: val_loss improved from 0.53514 to 0.51838, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.7283
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 8ms/step - accuracy: 0.7370 - loss: 0.5657 - val_accuracy: 0.7631 - val_loss: 0.5184 - learning_rate: 1.0000e-04 - val_f1_score: 0.7283
+Epoch 5/250
+161/164 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - accuracy: 0.7457 - loss: 0.5494
+Epoch 5: val_loss improved from 0.51838 to 0.47694, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.7394
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 9ms/step - accuracy: 0.7459 - loss: 0.5493 - val_accuracy: 0.7885 - val_loss: 0.4769 - learning_rate: 1.0000e-04 - val_f1_score: 0.7394
+Epoch 6/250
+163/164 ━━━━━━━━━━━━━━━━━━━━ 0s 6ms/step - accuracy: 0.7597 - loss: 0.5233
+Epoch 6: val_loss did not improve from 0.47694
+ - val_f1_score: 0.7420
+164/164 ━━━━━━━━━━━━━━━━━━━━ 2s 8ms/step - accuracy: 0.7596 - loss: 0.5235 - val_accuracy: 0.7820 - val_loss: 0.5025 - learning_rate: 1.0000e-04 - val_f1_score: 0.7420
+Epoch 7/250
+160/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7536 - loss: 0.5257
+Epoch 7: val_loss did not improve from 0.47694
+ - val_f1_score: 0.7408
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 7ms/step - accuracy: 0.7537 - loss: 0.5258 - val_accuracy: 0.7910 - val_loss: 0.4771 - learning_rate: 1.0000e-04 - val_f1_score: 0.7408
+Epoch 8/250
+162/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7701 - loss: 0.5110
+Epoch 8: val_loss did not improve from 0.47694
+ - val_f1_score: 0.7141
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 7ms/step - accuracy: 0.7700 - loss: 0.5112 - val_accuracy: 0.7656 - val_loss: 0.5015 - learning_rate: 1.0000e-04 - val_f1_score: 0.7141
+Epoch 9/250
+159/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7699 - loss: 0.5128
+Epoch 9: val_loss did not improve from 0.47694
+ - val_f1_score: 0.7211
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 6ms/step - accuracy: 0.7697 - loss: 0.5129 - val_accuracy: 0.7664 - val_loss: 0.4878 - learning_rate: 1.0000e-04 - val_f1_score: 0.7211
+Epoch 10/250
+158/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7626 - loss: 0.5091
+Epoch 10: val_loss improved from 0.47694 to 0.47649, saving model to models/cnn_transformer_best.keras
+ - val_f1_score: 0.7456
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 7ms/step - accuracy: 0.7627 - loss: 0.5091 - val_accuracy: 0.7885 - val_loss: 0.4765 - learning_rate: 1.0000e-04 - val_f1_score: 0.7456
+Epoch 11/250
+163/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7670 - loss: 0.5015
+Epoch 11: val_loss did not improve from 0.47649
+ - val_f1_score: 0.7262
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 7ms/step - accuracy: 0.7671 - loss: 0.5015 - val_accuracy: 0.7828 - val_loss: 0.4848 - learning_rate: 1.0000e-04 - val_f1_score: 0.7262
+Epoch 12/250
+162/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7603 - loss: 0.5086
+Epoch 12: val_loss did not improve from 0.47649
+ - val_f1_score: 0.7350
+164/164 ━━━━━━━━━━━━━━━━━━━━ 1s 7ms/step - accuracy: 0.7605 - loss: 0.5085 - val_accuracy: 0.7713 - val_loss: 0.4830 - learning_rate: 1.0000e-04 - val_f1_score: 0.7350
+Epoch 13/250
+158/164 ━━━━━━━━━━━━━━━━━━━━ 0s 5ms/step - accuracy: 0.7700 - loss: 0.4951
+Epoch 13: val_loss
+Training ensemble models...
+   Ensemble Val F1: 0.7807
+
+3. Applying Constitutional AI wrapper...
+
+✅ Training complete!
+
+Model Performance Summary:
+  CNN-Transformer: 0.7480
+  Ensemble:        0.7807
+
+================================================================================
+VALIDATION SET EVALUATION
+================================================================================
+
+================================================================================
+MODEL EVALUATION
+================================================================================
+
+Classification Report:
+                precision    recall  f1-score   support
+
+     CANDIDATE       0.58      0.68      0.62       253
+     CONFIRMED       0.87      0.85      0.86       350
+FALSE POSITIVE       0.91      0.85      0.88       617
+
+      accuracy                           0.82      1220
+     macro avg       0.78      0.79      0.79      1220
+  weighted avg       0.83      0.82      0.82      1220
+
+
+Overall Metrics:
+  Accuracy:  0.8164
+  F1-Score:  0.7874
+
+================================================================================
+TEST SET EVALUATION
+================================================================================
+
+================================================================================
+MODEL EVALUATION
+=================================
+Classification Report:
+                precision    recall  f1-score   support
+
+     CANDIDATE       0.58      0.68      0.62       253
+     CONFIRMED       0.87      0.85      0.86       350
+FALSE POSITIVE       0.91      0.85      0.88       617
+
+      accuracy                           0.82      1220
+     macro avg       0.78      0.79      0.79      1220
+  weighted avg       0.83      0.82      0.82      1220
+
+
+Overall Metrics:
+  Accuracy:  0.8164
+  F1-Score:  0.7874
+
+================================================================================
+TEST SET EVALUATION
+================================================================================
+
+================================================================================
+MODEL EVALUATION
+================================================================================
+
+Classification Report:
+                precision    recall  f1-score   support
+
+     CANDIDATE       0.60      0.71      0.65       297
+     CONFIRMED       0.89      0.85      0.87       412
+FALSE POSITIVE       0.93      0.88      0.90       726
+
+      accuracy                           0.84      1435
+     macro avg       0.81      0.81      0.81      1435
+  weighted avg       0.85      0.84      0.84      1435
+
+
+Overall Metrics:
+  Accuracy:  0.8362
+  F1-Score:  0.8080
+
+================================================================================
+PERFORMANCE COMPARISON
+================================================================================
+
+Model 
+Original LightGBM                  0.8024
+Advanced System (Val)              0.7874
+Advanced System (Test)             0.8080
+Improvement                       +0.0056
+
+✅ System saved to models/advanced_system/
+
+================================================================================
+CONSTITUTIONAL AI SAMPLE PREDICTIONS
+================================================================================
+
+Sample 1:
+  Prediction:  FALSE POSITIVE
+  Confidence:  0.9749
+  Uncertainty: 0.0251
+  Flags:       None
+
+Sample 2:
+  Prediction:  CANDIDATE
+  Confidence:  0.5322
+  Uncertainty: 0.4678
+  Flags:       HIGH_UNCERTAINTY
+  Explanation: High uncertainty (0.468). Recommend human review. 
+
+Sample 3:
+  Prediction:  FALSE POSITIVE
+  Confidence:  0.9964
+  Uncertainty: 0.0036
+  Flags:       None
+
+Sample 4:
+  Prediction:  FALSE POSITIVE
+Confidence:  0.9957
+  Uncertainty: 0.0043
+  Flags:       None
+
+Sample 5:
+  Prediction:  FALSE POSITIVE
+  Confidence:  0.9812
+  Uncertainty: 0.0188
+  Flags:       None
+
+================================================================================
+🚀 ADVANCED EXOPLANET DETECTION SYSTEM READY!
+================================================================================
+
+Key Features:
+  ✓ CNN-Transformer architecture
+  ✓ Ensemble with LightGBM + XGBoost
+  ✓ Constitutional AI for scientific integrity
+  ✓ Uncertainty quantification
+  ✓ Explainable predictions
+  ✓ Backward compatible with existing pipeline
+
+Saved artifacts:
+  • models/advanced_system/cnn_transformer.keras
+  • models/advanced_system/ensemble.pkl
+  • models/advanced_system/constitutional.pkl
