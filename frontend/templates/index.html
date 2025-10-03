@@ -27,8 +27,11 @@
     <!-- Status Badge -->
     <div class="text-center mb-5">
         <span class="badge bg-success pulse" id="apiStatus">
-            <a href="https://exoplanet-hunter-ai-backend.onrender.com/"><i class="bi bi-check-circle"></i> System Online</a>
+            <i class="bi bi-check-circle"></i> System Online
         </span>
+        <button class="btn btn-warning btn-sm d-none ms-2" id="wakeButton" onclick="wakeAPI()">
+            <i class="bi bi-lightning-charge"></i> Wake API
+        </button>
     </div>
 
     <!-- Statistics Cards -->
@@ -157,6 +160,40 @@
 
 {% block extra_js %}
 <script>
+    const API_URL = 'https://exoplanet-hunter-ai-backend.onrender.com';
+    
+    // Wake API function
+    function wakeAPI() {
+        const wakeButton = document.getElementById('wakeButton');
+        const statusBadge = document.getElementById('apiStatus');
+        
+        wakeButton.disabled = true;
+        wakeButton.innerHTML = '<i class="bi bi-hourglass-split"></i> Waking API...';
+        statusBadge.innerHTML = '<i class="bi bi-hourglass-split"></i> Waking up...';
+        statusBadge.className = 'badge bg-info';
+        
+        // Ping the API to wake it up
+        fetch(API_URL + '/api/model-stats')
+            .then(response => {
+                if (response.ok) {
+                    statusBadge.innerHTML = '<i class="bi bi-check-circle"></i> System Online';
+                    statusBadge.className = 'badge bg-success pulse';
+                    wakeButton.classList.add('d-none');
+                    wakeButton.disabled = false;
+                    wakeButton.innerHTML = '<i class="bi bi-lightning-charge"></i> Wake API';
+                } else {
+                    throw new Error('API not responding');
+                }
+            })
+            .catch(() => {
+                statusBadge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> API Offline';
+                statusBadge.className = 'badge bg-danger';
+                wakeButton.disabled = false;
+                wakeButton.innerHTML = '<i class="bi bi-lightning-charge"></i> Wake API';
+                wakeButton.classList.remove('d-none');
+            });
+    }
+    
     // Animate statistics on load
     function animateValue(id, start, end, duration) {
         const obj = document.getElementById(id);
@@ -319,18 +356,24 @@
         fetch('/api/model-stats')
             .then(response => {
                 const statusBadge = document.getElementById('apiStatus');
+                const wakeButton = document.getElementById('wakeButton');
+                
                 if (response.ok) {
                     statusBadge.innerHTML = '<i class="bi bi-check-circle"></i> System Online';
                     statusBadge.className = 'badge bg-success pulse';
+                    wakeButton.classList.add('d-none');
                 } else {
                     statusBadge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> API Offline';
-                    statusBadge.className = 'badge bg-warning';
+                    statusBadge.className = 'badge bg-danger';
+                    wakeButton.classList.remove('d-none');
                 }
             })
             .catch(() => {
                 const statusBadge = document.getElementById('apiStatus');
-                statusBadge.innerHTML = '<i class="bi bi-x-circle"></i> API Offline';
+                const wakeButton = document.getElementById('wakeButton');
+                statusBadge.innerHTML = '<i class="bi bi-exclamation-triangle"></i> API Offline';
                 statusBadge.className = 'badge bg-danger';
+                wakeButton.classList.remove('d-none');
             });
     });
 </script>
