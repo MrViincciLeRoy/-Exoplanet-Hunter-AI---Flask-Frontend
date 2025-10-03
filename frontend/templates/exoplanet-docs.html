@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Exoplanet Hunter AI</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --space-dark: #0a0e27;
+            --space-blue: #1a1f3a;
+            --nebula-purple: #8b5cf6;
+            --nebula-pink: #ec4899;
+            --star-gold: #fbbf24;
+            --planet-cyan: #06b6d4;
+            --text-light: #e5e7eb;
+            --text-muted: #9ca3af;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--space-dark) 0%, var(--space-blue) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent);
+            background-size: 400px 400px, 350px 350px, 300px 300px, 400px 400px, 350px 350px;
+            background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 200px 150px;
+            animation: stars 60s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.8;
+        }
+        
+        @keyframes stars {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(-400px) translateX(-100px); }
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(10, 14, 39, 0.9) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--nebula-purple);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
+        }
+        
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--nebula-purple), var(--planet-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .navbar-brand i {
+            color: var(--star-gold);
+            -webkit-text-fill-color: var(--star-gold);
+        }
+        
+        .hero-section {
+            padding: 4rem 0 2rem;
+            text-align: center;
+        }
+        
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--nebula-purple), var(--planet-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--nebula-purple);
+            margin: 3rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
+        }
+        
+        .subsection-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--planet-cyan);
+            margin: 2rem 0 1rem;
+        }
+        
+        .card {
+            background: rgba(26, 31, 58, 0.8);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+        }
+        
+        .feature-card {
+            padding: 1.5rem;
+            height: 100%;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--star-gold);
+            margin-bottom: 1rem;
+        }
+        
+        .code-block {
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .code-block code {
+            color: var(--text-light);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .table {
+            color: var(--text-light);
+            background: rgba(26, 31, 58, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.3));
+        }
+        
+        .table th {
+            border-color: rgba(139, 92, 246, 0.3);
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        
+        .table td {
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: linear-gradient(135deg, var(--nebula-purple), var(--nebula-pink));
+        }
+        
+        .badge-success {
+            background: rgba(34, 197, 94, 0.3);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .endpoint-method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+        }
+        
+        .method-post {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .highlight-box {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--nebula-purple);
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--star-gold);
+        }
+        
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        footer {
+            background: rgba(10, 14, 39, 0.9);
+            border-top: 2px solid var(--nebula-purple);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        a {
+            color: var(--planet-cyan);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--nebula-purple);
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi bi-stars"></i> Exoplanet Hunter AI
+                </a>
+            </div>
+        </nav>
+
+        <div class="hero-section">
+            <div class="container">
+                <h1 class="hero-title">
+                    <i class="bi bi-book"></i> Technical Documentation
+                </h1>
+                <p class="lead text-muted">Complete guide to the Advanced Exoplanet Detection System</p>
+            </div>
+        </div>
+
+        <main class="container pb-5">
+            <!-- Model Overview -->
+            <section id="overview">
+                <h2 class="section-title">
+                    <i class="bi bi-diagram-3"></i> Model Architecture Overview
+                </h2>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-cpu"></i>
+                            </div>
+                            <h5>CNN-Transformer Hybrid</h5>
+                            <p class="text-muted">Combines convolutional layers for local pattern extraction with transformer attention for long-range dependencies</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-layers"></i>
+                            </div>
+                            <h5>Ensemble Method</h5>
+                            <p class="text-muted">Voting classifier combining LightGBM and XGBoost for robust predictions</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card feature-card">
+                            <div class="feature-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h5>Constitutional AI</h5>
+                            <p class="text-muted">Built-in scientific integrity principles with uncertainty quantification</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p>The Advanced Exoplanet Detection System classifies exoplanet candidates into three categories:</p>
+                        <ul>
+                            <li><span class="badge badge-success">CONFIRMED</span> - Verified exoplanets</li>
+                            <li><span class="badge" style="background: rgba(251, 191, 36, 0.3); border: 1px solid rgba(251, 191, 36, 0.5);">CANDIDATE</span> - Potential exoplanets requiring further observation</li>
+                            <li><span class="badge" style="background: rgba(239, 68, 68, 0.3); border: 1px solid rgba(239, 68, 68, 0.5);">FALSE POSITIVE</span> - Non-planetary signals</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Performance Metrics -->
+            <section id="performance">
+                <h2 class="section-title">
+                    <i class="bi bi-graph-up"></i> Model Performance
+                </h2>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="metric-value">0.8142</div>
+                            <div class="metric-label">Macro F1-Score</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="metric-value">83.55%</div>
+                            <div class="metric-label">Accuracy</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="metric-value">0.8672</div>
+                            <div class="metric-label">F1 (Confirmed)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card metric-card">
+                            <div class="metric-value">0.8985</div>
+                            <div class="metric-label">F1 (False Positive)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Performance Comparison</h5>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Original LightGBM</th>
+                                    <th>Advanced System</th>
+                                    <th>Improvement</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Macro F1-Score</td>
+                                    <td>0.8024</td>
+                                    <td>0.8142</td>
+                                    <td class="text-success">+0.0118</td>
+                                </tr>
+                                <tr>
+                                    <td>F1 (CANDIDATE)</td>
+                                    <td>-</td>
+                                    <td>0.6771</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>F1 (CONFIRMED)</td>
+                                    <td>-</td>
+                                    <td>0.8672</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>F1 (FALSE POSITIVE)</td>
+                                    <td>-</td>
+                                    <td>0.8985</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="highlight-box mt-3">
+                            <i class="bi bi-info-circle"></i> <strong>Note:</strong> The CANDIDATE class remains challenging due to inherent ambiguity. Uncertainty quantification and review flagging are critical for these predictions.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Documentation -->
+            <section id="api">
+                <h2 class="section-title">
+                    <i class="bi bi-code-square"></i> API Documentation
+                </h2>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5><span class="endpoint-method method-post">POST</span>/predict</h5>
+                        <p class="text-muted">Submit exoplanet candidate features for classification</p>
+
+                        <h6 class="subsection-title">Request Body</h6>
+                        <p>JSON object containing 12 required feature values:</p>
+                        
+                        <div class="code-block">
+<pre><code>{
+  "koi_score": 0.987,
+  "koi_depth": 500.2,
+  "koi_teq": 750.0,
+  "koi_prad": 3.1,
+  "koi_smass": 1.1,
+  "koi_srad": 1.0,
+  "koi_steff": 5800.0,
+  "koi_model_snr": 150.0,
+  "koi_slogg": 4.4,
+  "koi_insol": 1200.0,
+  "koi_duration": 4.5,
+  "koi_period": 10.8
+}</code></pre>
+                        </div>
+
+                        <h6 class="subsection-title">Input Features</h6>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>koi_score</code></td>
+                                    <td>KOI disposition score</td>
+                                    <td>float (0-1)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_depth</code></td>
+                                    <td>Transit depth (ppm)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_teq</code></td>
+                                    <td>Equilibrium temperature (K)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_prad</code></td>
+                                    <td>Planet radius (Earth radii)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_smass</code></td>
+                                    <td>Stellar mass (solar masses)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_srad</code></td>
+                                    <td>Stellar radius (solar radii)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_steff</code></td>
+                                    <td>Stellar effective temperature (K)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_model_snr</code></td>
+                                    <td>Signal-to-noise ratio</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_slogg</code></td>
+                                    <td>Stellar surface gravity (log10)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_insol</code></td>
+                                    <td>Insolation flux (Earth flux)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_duration</code></td>
+                                    <td>Transit duration (hours)</td>
+                                    <td>float</td>
+                                </tr>
+                                <tr>
+                                    <td><code>koi_period</code></td>
+                                    <td>Orbital period (days)</td>
+                                    <td>float</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h6 class="subsection-title">Response Format</h6>
+                        <div class="code-block">
+<pre><code>{
+  "prediction": "CONFIRMED",
+  "confidence": 0.9250,
+  "uncertainty": 0.0850,
+  "requires_review": false,
+  "flags": [],
+  "explanation": "Prediction based on key features like koi_score and koi_period."
+}</code></pre>
+                        </div>
+
+                        <h6 class="subsection-title">Response Fields</h6>
+                        <ul>
+                            <li><code>prediction</code> (string): Classification result (CONFIRMED, CANDIDATE, or FALSE POSITIVE)</li>
+                            <li><code>confidence</code> (float): Model confidence for predicted class (0-1)</li>
+                            <li><code>uncertainty</code> (float): Uncertainty measure using Monte Carlo Dropout</li>
+                            <li><code>requires_review</code> (boolean): Whether human review is recommended</li>
+                            <li><code>flags</code> (array): Warning flags (e.g., HIGH_UNCERTAINTY, LOW_CONFIDENCE_CONFIRMED)</li>
+                            <li><code>explanation</code> (string): Human-readable explanation of the prediction</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Example Scenarios -->
+                <h3 class="subsection-title">Example Scenarios</h3>
+
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6><i class="bi bi-check-circle text-success"></i> High Confidence Confirmed Planet</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">Request:</p>
+                                <div class="code-block">
+<pre><code>{
+  "koi_score": 0.987,
+  "koi_depth": 500.2,
+  "koi_period": 10.8,
+  ...
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">Response:</p>
+                                <div class="code-block">
+<pre><code>{
+  "prediction": "CONFIRMED",
+  "confidence": 0.9250,
+  "uncertainty": 0.0850,
+  "requires_review": false
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h6><i class="bi bi-exclamation-triangle" style="color: var(--star-gold);"></i> Uncertain Candidate - Review Needed</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">Request:</p>
+                                <div class="code-block">
+<pre><code>{
+  "koi_score": 0.650,
+  "koi_model_snr": 15.0,
+  "koi_period": 5.5,
+  ...
+}</code></pre>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">Response:</p>
+                                <div class="code-block">
+<pre><code>{
+  "prediction": "CANDIDATE",
+  "confidence": 0.5500,
+  "uncertainty": 0.3500,
+  "requires_review": true,
+  "flags": ["HIGH_UNCERTAINTY"]
+}</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Features -->
+            <section id="features">
+                <h2 class="section-title">
+                    <i class="bi bi-star"></i> Key Features
+                </h2>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="bi bi-graph-up-arrow"></i> Uncertainty Quantification</h5>
+                                <p>Monte Carlo Dropout provides epistemic and aleatoric uncertainty estimates, allowing the model to express when it's unsure about predictions.</p>
+                                <div class="highlight-box">
+                                    High uncertainty triggers automatic review flagging
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="bi bi-lightbulb"></i> Feature Importance</h5>
+                                <p>The ensemble component provides insights into which features most influence predictions, aiding scientific interpretation.</p>
+                                <div class="highlight-box">
+                                    Key features: koi_score, koi_period, koi_model_snr
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="bi bi-shield-check"></i> Constitutional AI Principles</h5>
+                                <ul class="mb-0">
+                                    <li>Scientific rigor with uncertainty quantification</li>
+                                    <li>Transparent explanations for all predictions</li>
+                                    <li>Safety constraints prioritizing discovery</li>
+                                    <li>High recall for CANDIDATE class</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5><i class="bi bi-database"></i> Training Data</h5>
+                                <p>Trained on the <strong>Kepler Cumulative Dataset</strong> with comprehensive preprocessing:</p>
+                                <ul class="mb-0">
+                                    <li>Missing value imputation</li>
+                                    <li>Feature scaling and normalization</li>
+                                    <li>SMOTE for class imbalance</li>
+                                    <li>12 primary stellar and orbital features</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Details -->
+            <section id="technical">
+                <h2 class="section-title">
+                    <i class="bi bi-gear"></i> Technical Implementation
+                </h2>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>CNN-Transformer Architecture</h5>
+                        <ul>
+                            <li>3 convolutional layers (64, 128, 128 filters) for local pattern extraction</li>
+                            <li>Positional encoding for sequence modeling</li>
+                            <li>Multi-head self-attention (8 heads, 128 dimensions)</li>
+                            <li>2 transformer encoder blocks with feed-forward networks</li>
+                            <li>Global average pooling and dense classification head</li>
+                            <li>AdamW optimizer with weight decay</li>
+                            <li>Early stopping and learning rate scheduling</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5>Ensemble Configuration</h5>
+                        <ul>
+                            <li><strong>LightGBM:</strong> 300 estimators, max depth 7, learning rate 0.05</li>
+                            <li><strong>XGBoost:</strong> 300 estimators, max depth 6, learning rate 0.05</li>
+                            <li>Soft voting for probability-based ensemble</li>
+                            <li>Final prediction: 50% CNN-Transformer + 50% Ensemble</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5>Uncertainty Estimation</h5>
+                        <p>Monte Carlo Dropout with 100 forward passes provides:</p>
+                        <ul>
+                            <li><strong>Epistemic Uncertainty:</strong> Model uncertainty (variance of predictions)</li>
+                            <li><strong>Aleatoric Uncertainty:</strong> Data uncertainty (inherent noise)</li>
+                            <li><strong>Total Uncertainty:</strong> Combined measure (standard deviation)</li>
+                        </ul>
+                        <div class="highlight-box">
+                            <i class="bi bi-info-circle"></i> Predictions with uncertainty > 0.3 are automatically flagged for human review
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 style="color: var(--nebula-purple);">
+                            <i class="bi bi-stars"></i> Exoplanet Hunter AI
+                        </h5>
+                        <p class="text-muted">
+                            Advanced machine learning system for exoplanet detection.
+                            Built for NASA Space Apps Challenge 2024.
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-github"></i> View on GitHub<br>
+                            <i class="bi bi-file-earmark-code"></i> <a href="/docs" target="_blank">API Documentation</a>
+                        </p>
+                    </div>
+                </div>
+                <hr style="border-color: rgba(139, 92, 246, 0.3); margin: 2rem 0;">
+                <div class="text-center text-muted">
+                    <small>&copy; 2024 Exoplanet Hunter AI. NASA Space Apps Challenge.</small
