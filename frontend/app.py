@@ -70,7 +70,9 @@ def predict():
 def about():
     """About page with project information"""
     return render_template('about.html')
-
+@app.route('/research')
+def research():
+    return render_template('test_image.html')
 @app.route('/docs')
 def docs():
     """Documentation page with project information"""
