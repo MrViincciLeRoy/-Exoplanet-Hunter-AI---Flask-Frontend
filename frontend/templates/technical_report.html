@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block title %}Technical Report - Exoplanet Hunter AI{% endblock %}
-
 {% block content %}
 <div class="container">
     <!-- Report Header -->
@@ -41,12 +39,10 @@
             <h2 class="mb-0"><i class="bi bi-clipboard-data"></i> 1. Executive Summary</h2>
         </div>
         <div class="card-body">
-            <p>This technical report documents the development and evaluation of the Exoplanet Hunter AI system, an advanced machine learning solution designed to classify exoplanet candidates from NASA's Kepler mission data.</p>
-            
+            <p>This technical report documents the development and evaluation of the <strong>Exoplanet Hunter AI</strong> system, an advanced machine learning solution designed to classify exoplanet candidates from NASA's Kepler mission data.</p>
             <div class="alert alert-info">
-                <strong>Key Achievement:</strong> Developed a state-of-the-art ensemble system achieving <strong>83.6% accuracy</strong> and <strong>80.8% F1-score</strong> on the test set, combining CNN-Transformer architecture with gradient boosting methods.
+                <strong>Key Achievement:</strong> Developed a state-of-the-art ensemble system achieving <strong>83.62% accuracy</strong> and <strong>80.80% F1-score</strong> on the test set, combining CNN-Transformer architecture with gradient boosting methods and a Constitutional AI safety layer.
             </div>
-            
             <h5 class="text-nebula mt-4 mb-3">Project Overview</h5>
             <div class="row g-3">
                 <div class="col-md-3">
@@ -63,25 +59,25 @@
                 </div>
                 <div class="col-md-3">
                     <div class="text-center p-3" style="background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
-                        <h3 class="text-star">83.6%</h3>
+                        <h3 class="text-star">83.62%</h3>
                         <p class="text-muted mb-0">Final Accuracy</p>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="text-center p-3" style="background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
-                        <h3 class="text-star">95.2%</h3>
+                        <h3 class="text-star">95.17%</h3>
                         <p class="text-muted mb-0">ROC-AUC Score</p>
                     </div>
                 </div>
             </div>
-            
             <h5 class="text-nebula mt-4 mb-3">Technology Stack</h5>
             <ul>
-                <li><strong>Deep Learning:</strong> TensorFlow/Keras, CNN-Transformer hybrid architecture</li>
-                <li><strong>Gradient Boosting:</strong> LightGBM, XGBoost</li>
+                <li><strong>Deep Learning:</strong> TensorFlow/Keras, CNN-Transformer hybrid (10 epochs)</li>
+                <li><strong>Gradient Boosting:</strong> LightGBM (0.63s/train), XGBoost</li>
                 <li><strong>Data Processing:</strong> Pandas, NumPy, Scikit-learn</li>
+                <li><strong>Imbalance Handling:</strong> SMOTE (+51.8% training samples)</li>
                 <li><strong>Ensemble Methods:</strong> Weighted voting, stacking</li>
-                <li><strong>Safety Layer:</strong> Constitutional AI wrapper with uncertainty quantification</li>
+                <li><strong>Safety Layer:</strong> Constitutional AI with uncertainty quantification</li>
             </ul>
         </div>
     </div>
@@ -93,8 +89,7 @@
         </div>
         <div class="card-body">
             <h5 class="text-nebula mb-3">2.1 Data Sources</h5>
-            <p>Data was collected from NASA's Exoplanet Archive using the Table Access Protocol (TAP) service. Multiple datasets were retrieved to ensure comprehensive coverage:</p>
-            
+            <p>Data was collected from NASA's Exoplanet Archive using the Table Access Protocol (TAP) service. Multiple datasets were retrieved:</p>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -133,10 +128,8 @@
                     </tbody>
                 </table>
             </div>
-            
             <h5 class="text-nebula mt-4 mb-3">2.2 Primary Dataset: Kepler Cumulative</h5>
             <p>The Kepler Cumulative dataset was selected as the primary training source due to its comprehensive feature set and balanced representation of exoplanet classifications.</p>
-            
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
                     <div class="text-center p-3" style="background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
@@ -163,6 +156,9 @@
                     </div>
                 </div>
             </div>
+            <div class="alert alert-warning mt-3">
+                <strong>Data Quality:</strong> No duplicates, no missing target values. All 9,564 rows retained.
+            </div>
         </div>
     </div>
 
@@ -174,7 +170,6 @@
         <div class="card-body">
             <h5 class="text-nebula mb-3">3.1 Class Distribution</h5>
             <p>The dataset exhibits moderate class imbalance, with False Positives being the majority class:</p>
-            
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -203,18 +198,15 @@
                     </tbody>
                 </table>
             </div>
-            
             <div class="alert alert-warning mt-3">
-                <strong>Imbalance Ratio:</strong> 2.45:1 - Requires specialized handling through SMOTE and class weighting
+                <strong>Imbalance Ratio:</strong> 2.45:1 — addressed via SMOTE and class weighting.
             </div>
-
             <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/class_distribution.png') }}" alt="Class Distribution" class="img-fluid rounded shadow" style="max-height: 300px;">
             </div>
 
             <h5 class="text-nebula mt-4 mb-3">3.2 Feature Selection</h5>
             <p>From 153 available features, 12 key astronomical parameters were selected based on scientific relevance and data completeness (<30% missing):</p>
-            
             <div class="card bg-dark mt-3">
                 <div class="card-body">
                     <pre class="text-light mb-0"><code>Selected Features:
@@ -233,6 +225,25 @@
                 </div>
             </div>
 
+            <h5 class="text-nebula mt-4 mb-3">3.3 Key Insights from Log Analysis</h5>
+            <ul>
+                <li><strong>koi_score is highly discriminative:</strong>
+                    <ul>
+                        <li>CONFIRMED: mean = 0.9606</li>
+                        <li>CANDIDATE: mean = 0.7983</li>
+                        <li>FALSE POSITIVE: mean = 0.0381</li>
+                    </ul>
+                </li>
+                <li><strong>Threshold analysis:</strong> At <code>koi_score > 0.9</code>, we get 2,520 CONFIRMED vs only 73 FALSE POSITIVE.</li>
+                <li><strong>High correlations:</strong>
+                    <ul>
+                        <li><code>koi_smass ↔ koi_steff</code> (r = 0.813)</li>
+                        <li><code>koi_srad ↔ koi_slogg</code> (r = -0.835)</li>
+                    </ul>
+                </li>
+                <li><strong>Missing values:</strong> Total of 4,735 missing entries; <code>koi_score</code> has 1,510 (15.79%).</li>
+            </ul>
+
             <div class="row mt-4">
                 <div class="col-md-6 text-center">
                     <img src="{{ url_for('static', filename='img/missing_values.png') }}" alt="Missing Values" class="img-fluid rounded shadow">
@@ -244,17 +255,9 @@
                 </div>
             </div>
 
-            <h5 class="text-nebula mt-4 mb-3">3.3 Key Insights</h5>
-            <ul>
-                <li><strong>koi_score</strong> is highly discriminative: CONFIRMED objects have mean score 0.96, while FALSE POSITIVE average just 0.04.</li>
-                <li>A threshold of <code>koi_score > 0.9</code> yields 2,520 CONFIRMED vs only 73 FALSE POSITIVE.</li>
-                <li>High correlation found between <code>koi_smass ↔ koi_steff</code> (r=0.813) and <code>koi_srad ↔ koi_slogg</code> (r=-0.835).</li>
-            </ul>
-
             <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/correlation_matrix.png') }}" alt="Feature Correlation Matrix" class="img-fluid rounded shadow" style="max-height: 300px;">
             </div>
-
             <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/feature_distributions_by_class.png') }}" alt="Feature Distributions by Class" class="img-fluid rounded shadow">
             </div>
@@ -274,13 +277,12 @@
                 <li>Rows with all features missing: 0</li>
                 <li>Final dataset: 9,564 samples retained (100%)</li>
             </ul>
-            
+
             <h5 class="text-nebula mt-4 mb-3">4.2 Missing Value Imputation</h5>
-            <p>A total of 4,735 missing values were imputed using median strategy to maintain robust statistics.</p>
-            
+            <p>A total of <strong>4,735 missing values</strong> were imputed using the <strong>median strategy</strong> to preserve robust statistics.</p>
+
             <h5 class="text-nebula mt-4 mb-3">4.3 Train-Validation-Test Split</h5>
             <p>Stratified splitting to preserve class distributions:</p>
-            
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -321,10 +323,9 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <h5 class="text-nebula mt-4 mb-3">4.4 Class Imbalance Handling - SMOTE</h5>
-            <p>Synthetic Minority Over-sampling Technique (SMOTE) applied to balance training data:</p>
-            
+            <p>Synthetic Minority Over-sampling Technique (SMOTE) applied to balance training </p>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -357,11 +358,9 @@
                     </tbody>
                 </table>
             </div>
-            
             <div class="alert alert-success mt-3">
-                <strong>Training Set Expansion:</strong> From 6,909 to 10,488 samples (+51.8%)
+                <strong>Training Set Expansion:</strong> From 6,909 to <strong>10,488 samples (+51.8%)</strong>
             </div>
-
             <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/smote_comparison.png') }}" alt="SMOTE Comparison" class="img-fluid rounded shadow" style="max-height: 300px;">
             </div>
@@ -374,89 +373,71 @@
             <h2 class="mb-0"><i class="bi bi-cpu"></i> 5. Baseline Model Training</h2>
         </div>
         <div class="card-body">
-            <h5 class="text-nebula mb-3">5.1 Model Selection</h5>
-            <p>Five baseline models were trained to establish performance benchmarks:</p>
-            
-            <ol>
-                <li><strong>Logistic Regression</strong> - Linear baseline</li>
-                <li><strong>Random Forest</strong> - Ensemble decision trees</li>
-                <li><strong>Gradient Boosting</strong> - Sequential boosting</li>
-                <li><strong>XGBoost</strong> - Optimized gradient boosting</li>
-                <li><strong>LightGBM</strong> - Efficient gradient boosting</li>
-            </ol>
-            
-            <h5 class="text-nebula mt-4 mb-3">5.2 Validation Performance Comparison</h5>
+            <h5 class="text-nebula mb-3">5.1 Model Selection & Training Times</h5>
+            <p>Five baseline models were trained with performance measured on the validation set:</p>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Model</th>
                             <th>Accuracy</th>
-                            <th>Precision</th>
-                            <th>Recall</th>
                             <th>F1-Score</th>
                             <th>ROC-AUC</th>
+                            <th>Train Time</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr style="background: rgba(139, 92, 246, 0.2);">
                             <td><strong>LightGBM</strong></td>
                             <td><strong>82.79%</strong></td>
-                            <td><strong>79.67%</strong></td>
-                            <td><strong>80.76%</strong></td>
                             <td><strong>80.04%</strong></td>
                             <td><strong>94.68%</strong></td>
+                            <td><strong>0.63s</strong></td>
                         </tr>
                         <tr>
                             <td>Gradient Boosting</td>
                             <td>80.90%</td>
-                            <td>77.92%</td>
-                            <td>79.32%</td>
                             <td>78.26%</td>
                             <td>94.62%</td>
+                            <td>16.11s</td>
                         </tr>
                         <tr>
                             <td>XGBoost</td>
                             <td>81.39%</td>
-                            <td>77.52%</td>
-                            <td>78.21%</td>
                             <td>77.82%</td>
                             <td>94.24%</td>
+                            <td>1.21s</td>
                         </tr>
                         <tr>
                             <td>Random Forest</td>
                             <td>80.49%</td>
-                            <td>76.93%</td>
-                            <td>77.49%</td>
                             <td>77.12%</td>
                             <td>94.10%</td>
+                            <td>3.88s</td>
                         </tr>
                         <tr>
                             <td>Logistic Regression</td>
                             <td>77.05%</td>
-                            <td>72.21%</td>
-                            <td>73.91%</td>
                             <td>72.66%</td>
                             <td>91.07%</td>
+                            <td>0.19s</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="text-center my-4">
-                <img src="{{ url_for('static', filename='img/model_comparison.png') }}" alt="Model Comparison" class="img-fluid rounded shadow" style="max-height: 300px;">
-            </div>
-
-            <h5 class="text-nebula mt-4 mb-3">5.3 Hyperparameter Tuning (LightGBM)</h5>
+            <h5 class="text-nebula mt-4 mb-3">5.2 Hyperparameter Tuning (LightGBM)</h5>
             <p>Grid search over 81 parameter combinations yielded:</p>
             <ul>
                 <li><strong>Best Parameters:</strong> <code>learning_rate=0.3, max_depth=7, n_estimators=200, num_leaves=50</code></li>
                 <li><strong>Best CV F1-Score:</strong> 88.67%</li>
                 <li><strong>Test F1-Score:</strong> 80.24%</li>
             </ul>
-
             <div class="alert alert-success mt-3">
-                <strong>Best Baseline Model:</strong> LightGBM achieved the highest F1-score (80.04%) with excellent training efficiency (0.63s)
+                <strong>Best Baseline Model:</strong> LightGBM achieved the highest F1-score with excellent training efficiency.
+            </div>
+            <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/model_comparison.png') }}" alt="Model Comparison" class="img-fluid rounded shadow" style="max-height: 300px;">
             </div>
         </div>
     </div>
@@ -469,7 +450,6 @@
         <div class="card-body">
             <h5 class="text-nebula mb-3">6.1 Architecture Overview</h5>
             <p>To push beyond baseline performance, we developed an advanced multi-model ensemble system combining deep learning with gradient boosting methods.</p>
-            
             <div class="alert alert-info">
                 <strong>System Components:</strong>
                 <ul class="mb-0">
@@ -480,17 +460,15 @@
                     <li>Constitutional AI wrapper with uncertainty quantification</li>
                 </ul>
             </div>
-            
+
             <h5 class="text-nebula mt-4 mb-3">6.2 Ensemble Integration</h5>
             <p>The ensemble combines three complementary models using weighted voting:</p>
-            
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
                         <tr>
                             <th>Model</th>
                             <th>Type</th>
-                            <th>Strengths</th>
                             <th>Validation F1</th>
                         </tr>
                     </thead>
@@ -498,25 +476,21 @@
                         <tr>
                             <td>CNN-Transformer</td>
                             <td>Deep Learning</td>
-                            <td>Pattern recognition, non-linear relationships</td>
                             <td>74.80%</td>
                         </tr>
                         <tr>
                             <td>LightGBM</td>
                             <td>Gradient Boosting</td>
-                            <td>Feature importance, efficiency</td>
                             <td>80.04%</td>
                         </tr>
                         <tr>
                             <td>XGBoost</td>
                             <td>Gradient Boosting</td>
-                            <td>Regularization, robustness</td>
                             <td>77.82%</td>
                         </tr>
                         <tr style="background: rgba(139, 92, 246, 0.2);">
                             <td><strong>Ensemble</strong></td>
                             <td><strong>Voting</strong></td>
-                            <td><strong>Combined strengths</strong></td>
                             <td><strong>78.07%</strong></td>
                         </tr>
                     </tbody>
@@ -526,10 +500,13 @@
             <h5 class="text-nebula mt-4 mb-3">6.3 Constitutional AI Layer</h5>
             <p>Added safety and scientific integrity through:</p>
             <ul>
-                <li>Uncertainty quantification (e.g., high uncertainty → flag for human review)</li>
-                <li>Explainable predictions with confidence scores</li>
-                <li>Automated flagging of low-confidence predictions</li>
+                <li><strong>Uncertainty quantification:</strong> High uncertainty → flag for human review</li>
+                <li><strong>Explainable predictions:</strong> Confidence scores and natural language explanations</li>
+                <li><strong>Automated flagging:</strong> e.g., <code>HIGH_UNCERTAINTY</code> when confidence < 0.6</li>
             </ul>
+            <div class="alert alert-warning">
+                <strong>Example:</strong> Prediction = CANDIDATE, Confidence = 0.5322 → Flagged as <code>HIGH_UNCERTAINTY</code> with explanation: "High uncertainty (0.468). Recommend human review."
+            </div>
         </div>
     </div>
 
@@ -541,7 +518,6 @@
         <div class="card-body">
             <h5 class="text-nebula mb-3">7.1 Test Set Performance</h5>
             <p>The advanced ensemble system was evaluated on the held-out test set (n=1,435):</p>
-            
             <div class="row g-3 mt-3">
                 <div class="col-md-3">
                     <div class="text-center p-3" style="background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
@@ -569,11 +545,7 @@
                 </div>
             </div>
 
-            <div class="text-center my-4">
-                <img src="{{ url_for('static', filename='img/roc_curves.png') }}" alt="ROC Curves" class="img-fluid rounded shadow" style="max-height: 300px;">
-            </div>
-
-            <h5 class="text-nebula mt-4 mb-3">7.2 Detailed Classification Report</h5>
+            <h5 class="text-nebula mt-4 mb-3">7.2 Detailed Classification Report (Test Set)</h5>
             <div class="table-responsive">
                 <table class="table table-dark table-hover">
                     <thead>
@@ -619,30 +591,32 @@
             </div>
 
             <div class="text-center my-4">
+                <img src="{{ url_for('static', filename='img/roc_curves.png') }}" alt="ROC Curves" class="img-fluid rounded shadow" style="max-height: 300px;">
+            </div>
+            <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/confusion_matrix_test.png') }}" alt="Confusion Matrix" class="img-fluid rounded shadow">
             </div>
 
-            <h5 class="text-nebula mt-4 mb-3">7.3 Feature Importance</h5>
-            <p>Top 10 most important features (from LightGBM):</p>
+            <h5 class="text-nebula mt-4 mb-3">7.3 Feature Importance (Top 10)</h5>
+            <p>From LightGBM model (values = split gains):</p>
             <ol>
-                <li><strong>koi_duration</strong> – Transit duration (hours)</li>
-                <li><strong>koi_period</strong> – Orbital period (days)</li>
-                <li><strong>koi_model_snr</strong> – Signal-to-noise ratio</li>
-                <li><strong>koi_steff</strong> – Stellar temperature</li>
-                <li><strong>koi_prad</strong> – Planet radius</li>
-                <li><strong>koi_smass</strong> – Stellar mass</li>
-                <li><strong>koi_depth</strong> – Transit depth</li>
-                <li><strong>koi_score</strong> – Disposition score</li>
-                <li><strong>koi_slogg</strong> – Stellar surface gravity</li>
-                <li><strong>koi_teq</strong> – Equilibrium temperature</li>
+                <li><strong>koi_duration</strong> – 3,897</li>
+                <li><strong>koi_period</strong> – 3,235</li>
+                <li><strong>koi_model_snr</strong> – 2,860</li>
+                <li><strong>koi_steff</strong> – 2,752</li>
+                <li><strong>koi_prad</strong> – 2,313</li>
+                <li><strong>koi_smass</strong> – 2,113</li>
+                <li><strong>koi_depth</strong> – 2,081</li>
+                <li><strong>koi_score</strong> – 1,982</li>
+                <li><strong>koi_slogg</strong> – 1,688</li>
+                <li><strong>koi_teq</strong> – 1,567</li>
             </ol>
-
             <div class="text-center my-4">
                 <img src="{{ url_for('static', filename='img/feature_importance.png') }}" alt="Feature Importance" class="img-fluid rounded shadow" style="max-height: 300px;">
             </div>
 
             <div class="alert alert-success mt-3">
-                <strong>Performance Improvement:</strong> The advanced system achieved a +0.56% improvement in F1-score over the original LightGBM baseline, with added benefits of uncertainty quantification and explainability.
+                <strong>Performance Improvement:</strong> The advanced system achieved a <strong>+0.56% improvement in F1-score</strong> over the original LightGBM baseline (80.24% → 80.80%), with added benefits of uncertainty quantification and explainability.
             </div>
         </div>
     </div>
@@ -665,33 +639,31 @@
                     <li>✅ Deployed web application with RESTful API</li>
                 </ul>
             </div>
-            
+
             <h5 class="text-nebula mt-4 mb-3">8.2 Future Enhancements</h5>
-            
             <h6 class="text-star">Short-term Improvements</h6>
             <ul>
-                <li><strong>Data Augmentation:</strong> Integrate TESS and K2 mission data for broader coverage</li>
-                <li><strong>Feature Engineering:</strong> Develop domain-specific features from light curve analysis</li>
-                <li><strong>Model Refinement:</strong> Experiment with attention visualization and explainability methods</li>
-                <li><strong>Threshold Optimization:</strong> Adjust decision boundaries for different use cases</li>
+                <li><strong>Data Augmentation:</strong> Integrate TESS and K2 mission data</li>
+                <li><strong>Feature Engineering:</strong> Light curve analysis features</li>
+                <li><strong>Model Refinement:</strong> Attention visualization, SHAP explanations</li>
+                <li><strong>Threshold Optimization:</strong> Adjust for precision vs recall trade-offs</li>
             </ul>
-            
+
             <h6 class="text-star">Long-term Vision</h6>
             <ul>
-                <li><strong>Real-time Processing:</strong> Integration with telescope data streams</li>
-                <li><strong>Multi-modal Learning:</strong> Incorporate spectroscopic and imaging data</li>
-                <li><strong>Active Learning:</strong> Continuous model improvement from astronomer feedback</li>
-                <li><strong>Federated Learning:</strong> Collaborative training across multiple observatories</li>
-                <li><strong>Transfer Learning:</strong> Adapt models for other exoplanet detection methods</li>
+                <li><strong>Real-time Processing:</strong> Telescope data stream integration</li>
+                <li><strong>Multi-modal Learning:</strong> Spectroscopic + imaging data</li>
+                <li><strong>Active Learning:</strong> Astronomer feedback loop</li>
+                <li><strong>Federated Learning:</strong> Cross-observatory collaboration</li>
             </ul>
-            
+
             <h5 class="text-nebula mt-4 mb-3">8.3 Acknowledgments</h5>
             <p>This project was made possible by:</p>
             <ul>
-                <li><strong>NASA Exoplanet Archive:</strong> Providing comprehensive, high-quality datasets</li>
-                <li><strong>Kepler Mission Team:</strong> Revolutionary contributions to exoplanet science</li>
-                <li><strong>Space Apps Challenge:</strong> Platform for innovation and collaboration</li>
-                <li><strong>Open Source Community:</strong> Tools and libraries that enabled rapid development</li>
+                <li><strong>NASA Exoplanet Archive:</strong> High-quality datasets</li>
+                <li><strong>Kepler Mission Team:</strong> Foundational exoplanet science</li>
+                <li><strong>Space Apps Challenge:</strong> Innovation platform</li>
+                <li><strong>Open Source Community:</strong> TensorFlow, Scikit-learn, LightGBM</li>
             </ul>
         </div>
     </div>
@@ -706,7 +678,7 @@
             </h4>
             <p class="mb-0">
                 <strong>Exoplanet Hunter AI</strong> - Technical Report<br>
-                NASA Space Apps Challenge 2025 | January 2025
+                NASA Space Apps Challenge 2025 | 10/ 2025
             </p>
         </div>
     </div>
