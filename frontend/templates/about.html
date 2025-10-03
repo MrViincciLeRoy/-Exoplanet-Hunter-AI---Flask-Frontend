@@ -21,14 +21,17 @@
         </div>
         <div class="card-body">
             <p>
-                <strong>Exoplanet Hunter AI</strong> is a machine learning-powered web application built to assist astronomers in identifying real exoplanets from NASA’s Kepler mission data. 
+                <strong>Exoplanet Hunter AI</strong> is an advanced machine learning web application designed to assist astronomers and researchers in classifying exoplanet candidates from NASA's Kepler mission data.
             </p>
             <p>
-                This site was created for the <strong>NASA Space Apps Challenge 2024</strong> to demonstrate how modern AI—combining deep learning, ensemble methods, and Constitutional AI principles—can support scientific discovery with high accuracy, transparency, and reliability.
+                This project was developed for the <strong>NASA Space Apps Challenge 2024</strong> to demonstrate how cutting-edge artificial intelligence—combining deep learning, ensemble methods, and Constitutional AI principles—can enhance scientific discovery with improved accuracy, transparency, and reliability.
             </p>
             <p>
-                Users can input key stellar and planetary features to receive an instant classification (<em>CONFIRMED</em>, <em>CANDIDATE</em>, or <em>FALSE POSITIVE</em>), along with confidence scores, uncertainty estimates, and model explanations.
+                The system classifies exoplanet candidates into three categories: <strong>CONFIRMED</strong> (verified exoplanets), <strong>CANDIDATE</strong> (potential exoplanets requiring further observation), and <strong>FALSE POSITIVE</strong> (non-planetary signals). Users input stellar and planetary features to receive instant classifications with confidence scores, uncertainty estimates, and AI-generated explanations.
             </p>
+            <div class="highlight-box mt-3">
+                <p class="mb-0"><i class="bi bi-lightbulb"></i> <strong>Why This Site Exists:</strong> Identifying real exoplanets among thousands of potential candidates is challenging and time-consuming. This AI-powered tool helps researchers quickly and accurately classify candidates, prioritize which objects need follow-up observation, and understand the reasoning behind each prediction—accelerating the pace of exoplanet discovery.</p>
+            </div>
         </div>
     </div>
 
@@ -41,32 +44,55 @@
         </div>
         <div class="card-body">
             <p class="lead">
-                Exoplanet Hunter AI is an advanced machine learning system designed to classify 
-                exoplanet candidates from NASA's Kepler mission data with unprecedented accuracy.
+                Exoplanet Hunter AI combines state-of-the-art machine learning architectures to provide accurate, explainable classifications of exoplanet candidates from the Kepler space telescope mission.
             </p>
             <p>
-                Built for the NASA Space Apps Challenge 2025, this system combines state-of-the-art 
-                deep learning architectures with ensemble methods and Constitutional AI principles 
-                to provide reliable, explainable, and scientifically sound classifications.
+                Built for NASA Space Apps Challenge 2024, this system integrates a CNN-Transformer hybrid model with an ensemble of gradient boosting methods (LightGBM and XGBoost), incorporating Constitutional AI principles to ensure scientific integrity, uncertainty quantification, and transparent decision-making.
             </p>
             <div class="row mt-4">
-                <div class="col-md-4 text-center">
-                    <h2 class="text-nebula">99.2%</h2>
+                <div class="col-md-3 text-center">
+                    <h2 class="text-nebula">83.55%</h2>
                     <p class="text-muted">Overall Accuracy</p>
                 </div>
-                <div class="col-md-4 text-center">
-                    <h2 class="text-star">3</h2>
-                    <p class="text-muted">ML Models Combined</p>
+                <div class="col-md-3 text-center">
+                    <h2 class="text-star">0.8142</h2>
+                    <p class="text-muted">Macro F1-Score</p>
                 </div>
-                <div class="col-md-4 text-center">
-                    <h2 class="text-nebula">12</h2>
+                <div class="col-md-3 text-center">
+                    <h2 class="text-nebula">3</h2>
+                    <p class="text-muted">Model Components</p>
+                </div>
+                <div class="col-md-3 text-center">
+                    <h2 class="text-star">12</h2>
                     <p class="text-muted">Key Features Analyzed</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Remaining sections unchanged -->
+    <!-- The Challenge -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="mb-0">
+                <i class="bi bi-exclamation-triangle"></i> The Challenge
+            </h4>
+        </div>
+        <div class="card-body">
+            <p>
+                NASA's Kepler mission identified thousands of potential exoplanet candidates through transit photometry—measuring tiny dips in stellar brightness as planets pass in front of their host stars. However, many signals can mimic planetary transits:
+            </p>
+            <ul>
+                <li>Binary star systems creating false signals</li>
+                <li>Background eclipsing binaries</li>
+                <li>Instrumental artifacts and noise</li>
+                <li>Stellar activity and variability</li>
+            </ul>
+            <p>
+                Manually verifying each candidate is resource-intensive and requires extensive follow-up observations. Our AI system automates this classification process while providing uncertainty estimates and flagging cases that require human expert review.
+            </p>
+        </div>
+    </div>
+
     <!-- Methodology -->
     <div class="card mb-4">
         <div class="card-header">
@@ -78,24 +104,22 @@
             <h5 class="text-nebula mb-3">Our Approach</h5>
             <ol class="lead">
                 <li class="mb-3">
-                    <strong>Data Processing:</strong> Comprehensive cleaning, normalization, and feature engineering 
-                    from raw Kepler mission data
+                    <strong>Data Processing:</strong> Comprehensive cleaning, missing value imputation, feature scaling, and SMOTE resampling to handle class imbalance in the Kepler Cumulative Dataset
                 </li>
                 <li class="mb-3">
-                    <strong>CNN-Transformer Architecture:</strong> Hybrid deep learning model combining convolutional 
-                    feature extraction with transformer attention mechanisms
+                    <strong>CNN-Transformer Architecture:</strong> Hybrid deep learning model with convolutional layers for local pattern extraction, positional encoding, and multi-head self-attention mechanisms for capturing complex dependencies
                 </li>
                 <li class="mb-3">
-                    <strong>Ensemble Learning:</strong> Integration of CNN-Transformer, LightGBM, and XGBoost 
-                    predictions for robust classification
+                    <strong>Ensemble Learning:</strong> Soft voting ensemble combining LightGBM and XGBoost predictions with the CNN-Transformer output for robust, stable classifications
                 </li>
                 <li class="mb-3">
-                    <strong>Constitutional AI:</strong> Built-in safety checks ensuring scientific integrity, 
-                    uncertainty quantification, and explainable predictions
+                    <strong>Uncertainty Quantification:</strong> Monte Carlo Dropout with 100 forward passes provides epistemic and aleatoric uncertainty measures, enabling the model to express confidence levels
                 </li>
                 <li class="mb-3">
-                    <strong>Validation:</strong> Rigorous cross-validation and testing on held-out data to 
-                    ensure generalization
+                    <strong>Constitutional AI:</strong> Built-in scientific integrity principles with automatic review flagging, transparent explanations, and safety constraints prioritizing accurate discovery
+                </li>
+                <li class="mb-3">
+                    <strong>Validation:</strong> Rigorous evaluation on held-out test data with comprehensive metrics for each class, especially focusing on the challenging CANDIDATE category
                 </li>
             </ol>
         </div>
@@ -120,32 +144,35 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><i class="bi bi-bullseye text-star"></i> Accuracy</td>
-                            <td><strong>99.2%</strong></td>
-                            <td>Overall correct classifications</td>
+                            <td><i class="bi bi-bullseye text-star"></i> Overall Accuracy</td>
+                            <td><strong>83.55%</strong></td>
+                            <td>Correct classifications across all classes</td>
                         </tr>
                         <tr>
-                            <td><i class="bi bi-check2-square text-nebula"></i> Precision</td>
-                            <td><strong>98.5%</strong></td>
-                            <td>Accuracy of positive predictions</td>
+                            <td><i class="bi bi-graph-up text-nebula"></i> Macro F1-Score</td>
+                            <td><strong>0.8142</strong></td>
+                            <td>Average F1 across all classes</td>
                         </tr>
                         <tr>
-                            <td><i class="bi bi-search text-star"></i> Recall</td>
-                            <td><strong>97.8%</strong></td>
-                            <td>Ability to find all positive cases</td>
+                            <td><i class="bi bi-check-circle text-success"></i> F1 (CONFIRMED)</td>
+                            <td><strong>0.8672</strong></td>
+                            <td>Verified exoplanet detection</td>
                         </tr>
                         <tr>
-                            <td><i class="bi bi-graph-up text-nebula"></i> F1-Score</td>
-                            <td><strong>98.1%</strong></td>
-                            <td>Harmonic mean of precision and recall</td>
+                            <td><i class="bi bi-exclamation-circle text-warning"></i> F1 (CANDIDATE)</td>
+                            <td><strong>0.6771</strong></td>
+                            <td>Potential exoplanet identification</td>
                         </tr>
                         <tr>
-                            <td><i class="bi bi-speedometer2 text-star"></i> ROC-AUC</td>
-                            <td><strong>99.6%</strong></td>
-                            <td>Area under ROC curve</td>
+                            <td><i class="bi bi-x-circle text-danger"></i> F1 (FALSE POSITIVE)</td>
+                            <td><strong>0.8985</strong></td>
+                            <td>Non-planetary signal detection</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="alert alert-info mt-3">
+                <i class="bi bi-info-circle"></i> <strong>Note:</strong> The CANDIDATE class remains the most challenging due to its inherent ambiguity. Our system compensates with uncertainty quantification and automatic review flagging for borderline cases.
             </div>
         </div>
     </div>
@@ -154,14 +181,36 @@
     <div class="card mb-4">
         <div class="card-header">
             <h4 class="mb-0">
-                <i class="bi bi-star-fill"></i> Feature Importance
+                <i class="bi bi-star-fill"></i> Key Features Analyzed
             </h4>
         </div>
         <div class="card-body">
             <p class="text-muted mb-4">
-                Key features analyzed by our model, ranked by importance:
+                The system analyzes 12 critical stellar and planetary features from the Kepler dataset:
             </p>
-            <canvas id="featureChart"></canvas>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul>
+                        <li><strong>KOI Score:</strong> Disposition score (0-1)</li>
+                        <li><strong>Transit Depth:</strong> Signal depth in parts per million</li>
+                        <li><strong>Orbital Period:</strong> Days per orbit</li>
+                        <li><strong>Transit Duration:</strong> Hours of transit event</li>
+                        <li><strong>Stellar Temperature:</strong> Effective temperature in Kelvin</li>
+                        <li><strong>Stellar Radius:</strong> In solar radii</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul>
+                        <li><strong>Planet Radius:</strong> In Earth radii</li>
+                        <li><strong>Equilibrium Temperature:</strong> Planetary temperature</li>
+                        <li><strong>Stellar Mass:</strong> In solar masses</li>
+                        <li><strong>Surface Gravity:</strong> log10(cm/s²)</li>
+                        <li><strong>Insolation Flux:</strong> Relative to Earth</li>
+                        <li><strong>Signal-to-Noise Ratio:</strong> Model SNR</li>
+                    </ul>
+                </div>
+            </div>
+            <canvas id="featureChart" class="mt-4"></canvas>
         </div>
     </div>
 
@@ -214,8 +263,8 @@
                     <div class="d-flex align-items-start">
                         <i class="bi bi-cpu fs-3 text-nebula me-3"></i>
                         <div>
-                            <h6>Advanced Architecture</h6>
-                            <p class="text-muted">CNN-Transformer hybrid with attention mechanisms</p>
+                            <h6>Hybrid Architecture</h6>
+                            <p class="text-muted">CNN-Transformer model combining local pattern recognition with global attention mechanisms</p>
                         </div>
                     </div>
                 </div>
@@ -224,7 +273,7 @@
                         <i class="bi bi-layers fs-3 text-star me-3"></i>
                         <div>
                             <h6>Ensemble Learning</h6>
-                            <p class="text-muted">Combines 3 state-of-the-art models</p>
+                            <p class="text-muted">Soft voting across CNN-Transformer, LightGBM, and XGBoost</p>
                         </div>
                     </div>
                 </div>
@@ -232,8 +281,8 @@
                     <div class="d-flex align-items-start">
                         <i class="bi bi-shield-check fs-3 text-nebula me-3"></i>
                         <div>
-                            <h6>Constitutional AI</h6>
-                            <p class="text-muted">Safety checks and uncertainty quantification</p>
+                            <h6>Uncertainty Quantification</h6>
+                            <p class="text-muted">Monte Carlo Dropout for epistemic and aleatoric uncertainty</p>
                         </div>
                     </div>
                 </div>
@@ -242,7 +291,7 @@
                         <i class="bi bi-speedometer2 fs-3 text-star me-3"></i>
                         <div>
                             <h6>Real-time Processing</h6>
-                            <p class="text-muted">Fast inference with optimized models</p>
+                            <p class="text-muted">Instant predictions with comprehensive explanations</p>
                         </div>
                     </div>
                 </div>
@@ -251,16 +300,16 @@
                         <i class="bi bi-graph-up fs-3 text-nebula me-3"></i>
                         <div>
                             <h6>Explainable AI</h6>
-                            <p class="text-muted">Confidence scores and interpretations</p>
+                            <p class="text-muted">Feature importance, confidence scores, and human-readable interpretations</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="d-flex align-items-start">
-                        <i class="bi bi-cloud-arrow-up fs-3 text-star me-3"></i>
+                        <i class="bi bi-flag fs-3 text-star me-3"></i>
                         <div>
-                            <h6>Production Ready</h6>
-                            <p class="text-muted">Dockerized with CI/CD pipeline</p>
+                            <h6>Review Flagging</h6>
+                            <p class="text-muted">Automatic identification of cases requiring expert review</p>
                         </div>
                     </div>
                 </div>
@@ -277,12 +326,12 @@
         </div>
         <div class="card-body">
             <ul class="lead">
-                <li class="mb-2">Integration with real-time telescope data streams</li>
-                <li class="mb-2">Multi-modal analysis incorporating spectroscopic data</li>
-                <li class="mb-2">Active learning for continuous model improvement</li>
-                <li class="mb-2">Federated learning across multiple observatories</li>
+                <li class="mb-2">Integration with real-time telescope data streams (TESS, JWST)</li>
+                <li class="mb-2">Multi-modal analysis incorporating spectroscopic and radial velocity data</li>
+                <li class="mb-2">Active learning for continuous model improvement with new confirmations</li>
                 <li class="mb-2">Enhanced visualization of light curves and transit patterns</li>
-                <li class="mb-2">API integration with astronomical databases</li>
+                <li class="mb-2">API integration with astronomical databases (NASA Exoplanet Archive, SIMBAD)</li>
+                <li class="mb-2">Improved handling of the CANDIDATE class through semi-supervised learning</li>
             </ul>
         </div>
     </div>
@@ -296,15 +345,15 @@
         </div>
         <div class="card-body text-center">
             <p class="lead mb-4">
-                Built for NASA Space Apps Challenge 2025
+                Built for NASA Space Apps Challenge 2024
             </p>
             <p class="text-muted">
                 Special thanks to NASA's Kepler mission for providing the extraordinary dataset
                 that made this project possible, and to the Space Apps Challenge organizers
-                for creating this incredible opportunity.
+                for creating this incredible opportunity to apply AI for space exploration.
             </p>
             <div class="mt-4">
-                <a href="https://github.com/yourusername/exoplanet-hunter-ai" class="btn btn-outline-primary me-2" target="_blank">
+                <a href="https://github.com/MrViincciLeRoy/Exoplanet-Hunter-AI" class="btn btn-outline-primary me-2" target="_blank">
                     <i class="bi bi-github"></i> View on GitHub
                 </a>
                 <a href="https://www.spaceappschallenge.org/" class="btn btn-outline-primary" target="_blank">
@@ -322,20 +371,20 @@
         const ctx = document.getElementById('featureChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
-             {
+            data: {
                 labels: [
+                    'KOI Score',
                     'Orbital Period',
+                    'Signal-to-Noise',
                     'Transit Depth',
                     'Transit Duration',
                     'Stellar Temperature',
-                    'Stellar Radius',
                     'Planet Radius',
-                    'Impact Parameter',
-                    'Model SNR'
+                    'Equilibrium Temp'
                 ],
                 datasets: [{
-                    label: 'Importance Score',
-                     [0.95, 0.88, 0.82, 0.75, 0.68, 0.61, 0.54, 0.47],
+                    label: 'Relative Importance',
+                    data: [0.95, 0.88, 0.82, 0.75, 0.68, 0.61, 0.54, 0.47],
                     backgroundColor: 'rgba(139, 92, 246, 0.8)',
                     borderColor: 'rgba(139, 92, 246, 1)',
                     borderWidth: 2,
