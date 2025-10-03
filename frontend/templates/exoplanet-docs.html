@@ -143,6 +143,11 @@
         border: 1px solid rgba(239, 68, 68, 0.5);
         color: #fca5a5;
     }
+
+    /* New section styling */
+    .guide-card {
+        border-left: 4px solid var(--nebula-purple);
+    }
 </style>
 {% endblock %}
 
@@ -156,7 +161,48 @@
         <p class="lead text-muted">
             Complete guide to the Advanced Exoplanet Detection System
         </p>
+        <div class="mt-3">
+            <a href="/technical-report" class="btn btn-primary btn-lg">
+                <i class="bi bi-file-earmark-text"></i> Full Technical Report
+            </a>
+        </div>
     </div>
+
+    <!-- How to Use Section -->
+    <section id="how-to-use">
+        <h2 class="section-title">
+            <i class="bi bi-question-circle"></i> How to Use the Prediction Interface
+        </h2>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card guide-card">
+                    <div class="card-body">
+                        <h5><i class="bi bi-sliders"></i> Input Parameters</h5>
+                        <p>On the <a href="/predict" class="text-primary">Predict page</a>, you’ll find a form with:</p>
+                        <ul>
+                            <li><strong>Primary Features</strong> (required): orbital period, transit duration, depth, stellar radius, and temperature.</li>
+                            <li><strong>Advanced Features</strong> (optional): impact parameter, planet radius, stellar mass, log(g), insolation, equilibrium temperature, and SNR.</li>
+                        </ul>
+                        <p>Click <strong>“Load Example Data”</strong> to auto-fill realistic values.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card guide-card">
+                    <div class="card-body">
+                        <h5><i class="bi bi-graph-up"></i> Interpreting Results</h5>
+                        <p>After submitting, you’ll receive:</p>
+                        <ul>
+                            <li>A classification: <span class="badge badge-success">CONFIRMED</span>, <span class="badge badge-warning">CANDIDATE</span>, or <span class="badge badge-danger">FALSE POSITIVE</span></li>
+                            <li>Confidence score and probability breakdown</li>
+                            <li>Interactive charts: probability distribution, feature importance, model comparison</li>
+                            <li>AI-generated interpretation and safety flags (if any)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Model Overview -->
     <section id="overview">
@@ -566,9 +612,6 @@
         <h2 class="section-title">
             <i class="bi bi-gear"></i> Technical Implementation
         </h2>
-        <a href="/technical-report" class="btn btn-outline-primary" target="_blank">
-                            <i class="bi bi-info-circle"></i> Research Overview
-        </a>
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">CNN-Transformer Architecture</h5>
@@ -614,10 +657,8 @@
                 <div class="highlight-box">
                     <i class="bi bi-info-circle"></i> Predictions with uncertainty > 0.3 are automatically flagged for human review
                 </div>
-                
             </div>
         </div>
-        
     </section>
 </div>
 {% endblock %}
