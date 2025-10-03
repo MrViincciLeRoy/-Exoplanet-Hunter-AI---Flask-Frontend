@@ -71,6 +71,10 @@ def about():
     """About page with project information"""
     return render_template('about.html')
 
+@app.route('/docs')
+def docs():
+    """Documentation page with project information"""
+    return render_template('exoplanet-docs.html')
 @app.route('/api/model-stats')
 def model_stats():
     """Proxy endpoint to fetch model statistics"""
