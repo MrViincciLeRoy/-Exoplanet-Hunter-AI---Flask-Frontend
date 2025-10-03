@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block title %}About - Exoplanet Hunter AI{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="text-center mb-5">
@@ -12,6 +10,26 @@
         <p class="lead text-muted">
             Advanced AI system for NASA's Exoplanet Detection Challenge
         </p>
+    </div>
+
+    <!-- Purpose & Summary -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4 class="mb-0">
+                <i class="bi bi-stars"></i> Purpose & Summary
+            </h4>
+        </div>
+        <div class="card-body">
+            <p>
+                <strong>Exoplanet Hunter AI</strong> is a machine learning-powered web application built to assist astronomers in identifying real exoplanets from NASA’s Kepler mission data. 
+            </p>
+            <p>
+                This site was created for the <strong>NASA Space Apps Challenge 2024</strong> to demonstrate how modern AI—combining deep learning, ensemble methods, and Constitutional AI principles—can support scientific discovery with high accuracy, transparency, and reliability.
+            </p>
+            <p>
+                Users can input key stellar and planetary features to receive an instant classification (<em>CONFIRMED</em>, <em>CANDIDATE</em>, or <em>FALSE POSITIVE</em>), along with confidence scores, uncertainty estimates, and model explanations.
+            </p>
+        </div>
     </div>
 
     <!-- Project Overview -->
@@ -48,6 +66,7 @@
         </div>
     </div>
 
+    <!-- Remaining sections unchanged -->
     <!-- Methodology -->
     <div class="card mb-4">
         <div class="card-header">
@@ -296,7 +315,6 @@
     </div>
 </div>
 {% endblock %}
-
 {% block extra_js %}
 <script>
     // Feature Importance Chart
@@ -304,7 +322,7 @@
         const ctx = document.getElementById('featureChart').getContext('2d');
         new Chart(ctx, {
             type: 'bar',
-            data: {
+             {
                 labels: [
                     'Orbital Period',
                     'Transit Depth',
@@ -317,7 +335,7 @@
                 ],
                 datasets: [{
                     label: 'Importance Score',
-                    data: [0.95, 0.88, 0.82, 0.75, 0.68, 0.61, 0.54, 0.47],
+                     [0.95, 0.88, 0.82, 0.75, 0.68, 0.61, 0.54, 0.47],
                     backgroundColor: 'rgba(139, 92, 246, 0.8)',
                     borderColor: 'rgba(139, 92, 246, 1)',
                     borderWidth: 2,
