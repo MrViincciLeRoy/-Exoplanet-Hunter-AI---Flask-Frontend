@@ -425,32 +425,44 @@
     let pieChart, barChart, featureChart, radarChart, modelComparisonChart;
 
     // Example data
-    const exampleData = {
-        koi_period: 5.7, 
-        koi_duration: 3.2,
-        koi_depth: 150.5,
-        koi_srad: 1.05,
-        koi_steff: 5750,
-        koi_impact: 0.4,
-        koi_prad: 1.8,
-        koi_smass: 1.02,
-        koi_slogg: 4.5,
-        koi_insol: 1.2,
-        koi_teq: 290,
-        koi_model_snr: 25.5
+    // Function to generate random planet candidate data
+function generateRandomPlanetData() {
+    return {
+        koi_period: (Math.random() * 10).toFixed(2),  // Random period between 0 and 10
+        koi_duration: (Math.random() * 5).toFixed(2), // Random duration between 0 and 5
+        koi_depth: (Math.random() * 200).toFixed(2),   // Random depth between 0 and 200
+        koi_srad: (Math.random() * 2).toFixed(2),      // Random star radius between 0 and 2
+        koi_steff: (Math.random() * 6000 + 3000).toFixed(0), // Random effective temperature between 3000 and 9000
+        koi_impact: (Math.random()).toFixed(2),        // Random impact parameter between 0 and 1
+        koi_prad: (Math.random() * 2).toFixed(2),      // Random planet radius between 0 and 2
+        koi_smass: (Math.random() * 2).toFixed(2),     // Random star mass between 0 and 2
+        koi_slogg: (Math.random() * 5).toFixed(2),     // Random surface gravity
+        koi_insol: (Math.random() * 3).toFixed(2),     // Random insolation
+        koi_teq: (Math.random() * 600).toFixed(2),      // Random equilibrium temperature
+        koi_model_snr: (Math.random() * 30).toFixed(0)  // Random signal-to-noise ratio
     };
+}
 
-    // Load example data
-    document.getElementById('exampleBtn').addEventListener('click', () => {
-        Object.keys(exampleData).forEach(key => {
-            const input = document.getElementById(key);
-            if (input) input.value = exampleData[key];
-        });
-        
-        const advancedCollapse = new bootstrap.Collapse(document.getElementById('advancedFeatures'), {
-            show: true
-        });
+// Generate an array of random planet candidates
+const randomPlanetCandidates = Array.from({ length: 20 }, generateRandomPlanetData);
+
+// Example usage: Log the random planet candidates to the console
+console.log(randomPlanetCandidates);
+
+// Load example data into input fields
+document.getElementById('exampleBtn').addEventListener('click', () => {
+    const candidateIndex = Math.floor(Math.random() * randomPlanetCandidates.length);
+    const exampleData = randomPlanetCandidates[candidateIndex];
+
+    Object.keys(exampleData).forEach(key => {
+        const input = document.getElementById(key);
+        if (input) input.value = exampleData[key];
     });
+    
+    const advancedCollapse = new bootstrap.Collapse(document.getElementById('advancedFeatures'), {
+        show: true
+    });
+});
 
     // Form submission
     document.getElementById('predictionForm').addEventListener('submit', async (e) => {
