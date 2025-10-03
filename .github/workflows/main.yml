@@ -39,7 +39,7 @@ jobs:
       - name: Run health check
         run: |
           pip install uvicorn httpx
-          python app.py &
+          uvicorn app:app --host 0.0.0.0 --port 8000 &
           sleep 5
           curl --fail http://localhost:8000/
         working-directory: ./backend
